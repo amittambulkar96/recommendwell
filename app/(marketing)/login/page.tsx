@@ -44,7 +44,7 @@ export default function LoginPage() {
 
       if (!session?.user) throw new Error("User could not sign in");
 
-      router.push("/workspace");
+      router.push("/my-letters");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {

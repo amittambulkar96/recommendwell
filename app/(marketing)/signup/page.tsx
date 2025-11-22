@@ -23,7 +23,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [loading, setLoading] = useState(false);
-  const createNewUser = useMutation(api.users.createNewUser);
+  const createNewUser = useMutation(api.users.createUserProfile);
 
   const {
     register,
@@ -57,7 +57,7 @@ export default function LoginPage() {
 
       if (!newUser) throw new Error("User could not be created in database");
 
-      router.push("/workspace");
+      router.push("/my-letters");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
