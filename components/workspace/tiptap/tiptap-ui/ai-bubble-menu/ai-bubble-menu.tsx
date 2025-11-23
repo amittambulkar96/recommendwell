@@ -4,7 +4,11 @@ import * as React from "react";
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor";
 import { Button } from "@/components/workspace/tiptap/tiptap-ui-primitive/button";
 import { AISelector } from "@/components/workspace/tiptap/tiptap-ui/ai-selector";
-import { Bold, Italic, Underline } from "lucide-react";
+import {
+  TextBIcon,
+  TextItalicIcon,
+  TextUnderlineIcon,
+} from "@phosphor-icons/react";
 import { useTheme } from "next-themes";
 import SiriOrb from "@/components/workspace/common/SiriOrb";
 
@@ -322,7 +326,7 @@ export function AIBubbleMenu({ editor: providedEditor }: AIBubbleMenuProps) {
               : "transparent",
           }}
         >
-          <Bold className="w-3.5 h-3.5" />
+          <TextBIcon weight="duotone" className="w-3.5 h-3.5" />
         </Button>
 
         <Button
@@ -346,7 +350,7 @@ export function AIBubbleMenu({ editor: providedEditor }: AIBubbleMenuProps) {
               : "transparent",
           }}
         >
-          <Italic className="w-3.5 h-3.5" />
+          <TextItalicIcon weight="duotone" className="w-3.5 h-3.5" />
         </Button>
 
         <Button
@@ -370,7 +374,7 @@ export function AIBubbleMenu({ editor: providedEditor }: AIBubbleMenuProps) {
               : "transparent",
           }}
         >
-          <Underline className="w-3.5 h-3.5" />
+          <TextUnderlineIcon weight="duotone" className="w-3.5 h-3.5" />
         </Button>
       </div>
 

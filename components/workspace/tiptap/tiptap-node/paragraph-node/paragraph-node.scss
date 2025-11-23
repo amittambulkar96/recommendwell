@@ -2,7 +2,7 @@
   --tt-collaboration-carets-label: var(--tt-gray-light-900);
   --link-text-color: var(--tt-brand-color-500);
   --thread-text: var(--tt-gray-light-900);
-  --placeholder-color: var(--tt-gray-light-a-400);
+  --placeholder-color: #9ca3af;
   --thread-bg-color: var(--tt-color-yellow-inc-2);
 
   // ai
@@ -12,7 +12,7 @@
     --tt-collaboration-carets-label: var(--tt-gray-dark-100);
     --link-text-color: var(--tt-brand-color-400);
     --thread-text: var(--tt-gray-dark-900);
-    --placeholder-color: var(--tt-gray-dark-a-400);
+    --placeholder-color: #9ca3af;
     --thread-bg-color: var(--tt-color-yellow-dec-2);
 
     --tiptap-ai-insertion-color: var(--tt-brand-color-400);
@@ -164,7 +164,9 @@
 .tiptap.ProseMirror {
   // Base styles for inline threads
   .tiptap-thread.tiptap-thread--unresolved.tiptap-thread--inline {
-    transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out;
+    transition:
+      color 0.2s ease-in-out,
+      background-color 0.2s ease-in-out;
     color: var(--thread-text);
     border-bottom: 2px dashed var(--tt-color-yellow-base);
     font-weight: 600;

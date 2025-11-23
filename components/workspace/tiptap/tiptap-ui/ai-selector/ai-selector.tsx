@@ -8,19 +8,19 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/workspace/tiptap/tiptap-ui-primitive/card";
 import { Separator } from "@/components/ui/separator";
 import {
-  Sparkles,
-  Wrench,
-  Minus,
-  Plus,
-  ArrowRight,
-  X,
-  Check,
-  ArrowDown,
-  ArrowLeft,
-  RotateCcw,
-  Loader2,
-  WandSparkles,
-} from "lucide-react";
+  SparkleIcon,
+  WrenchIcon,
+  MinusIcon,
+  PlusIcon,
+  ArrowRightIcon,
+  XIcon,
+  CheckIcon,
+  ArrowDownIcon,
+  ArrowLeftIcon,
+  ArrowCounterClockwiseIcon,
+  CircleNotchIcon,
+  MagicWandIcon,
+} from "@phosphor-icons/react";
 import { getSelectedText } from "@/components/workspace/tiptap/tiptap-node/ai-highlight-node/ai-highlight-node-extension";
 import {
   replaceSelectionWithFormatting,
@@ -37,27 +37,27 @@ const AI_COMMANDS = [
   {
     key: "improve",
     label: "Improve",
-    icon: Sparkles,
+    icon: SparkleIcon,
   },
   {
     key: "fix",
     label: "Fix grammar",
-    icon: Wrench,
+    icon: WrenchIcon,
   },
   {
     key: "shorter",
     label: "Shorter",
-    icon: Minus,
+    icon: MinusIcon,
   },
   {
     key: "longer",
     label: "Longer",
-    icon: Plus,
+    icon: PlusIcon,
   },
   {
     key: "continue",
     label: "Continue",
-    icon: ArrowRight,
+    icon: ArrowRightIcon,
   },
 ];
 
@@ -139,7 +139,7 @@ export function AISelector({ onClose }: AISelectorProps) {
   if (showResults) {
     return (
       <Card
-        className="w-[32rem] max-h-96 overflow-y-auto shadow-lg border"
+        className="w-lg max-h-96 overflow-y-auto shadow-lg border"
         style={{
           borderRadius: "0.5rem",
         }}
@@ -175,7 +175,7 @@ export function AISelector({ onClose }: AISelectorProps) {
                       onClick={handleReplaceText}
                       className="w-full justify-start h-8 py-1 text-left text-xs text-gray-800 hover:bg-accent/40"
                     >
-                      <Check className="h-3 w-3 mr-1 text-purple-500" />
+                      <CheckIcon className="h-3 w-3 mr-1 text-purple-500" />
                       Replace
                     </Button>
                     <Button
@@ -184,7 +184,7 @@ export function AISelector({ onClose }: AISelectorProps) {
                       onClick={handleInsertAfter}
                       className="w-full justify-start h-8 py-1 text-left text-xs text-gray-800 hover:bg-accent/40"
                     >
-                      <ArrowRight className="h-3 w-3 mr-1 text-purple-500" />
+                      <ArrowRightIcon className="h-3 w-3 mr-1 text-purple-500" />
                       Insert after
                     </Button>
                     <Button
@@ -193,7 +193,7 @@ export function AISelector({ onClose }: AISelectorProps) {
                       onClick={handleInsertBelow}
                       className="w-full justify-start h-8 py-1 text-left text-xs text-gray-800 hover:bg-accent/40"
                     >
-                      <ArrowDown className="h-3 w-3 mr-1 text-purple-500" />
+                      <ArrowDownIcon className="h-3 w-3 mr-1 text-purple-500" />
                       Insert below
                     </Button>
                     <Button
@@ -202,7 +202,7 @@ export function AISelector({ onClose }: AISelectorProps) {
                       onClick={handleBack}
                       className="w-full justify-start h-8 py-1 text-left text-xs text-gray-800 hover:bg-accent/40"
                     >
-                      <ArrowLeft className="h-3 w-3 mr-1 text-purple-500" />
+                      <ArrowLeftIcon className="h-3 w-3 mr-1 text-purple-500" />
                       Back
                     </Button>
                     <Button
@@ -211,7 +211,10 @@ export function AISelector({ onClose }: AISelectorProps) {
                       onClick={handleTryAgain}
                       className="w-full justify-start h-8 py-1 text-left text-xs text-gray-800 hover:bg-accent/40"
                     >
-                      <RotateCcw className="h-3 w-3 mr-1 text-purple-500" />
+                      <ArrowCounterClockwiseIcon
+                        weight="duotone"
+                        className="h-3 w-3 mr-1 text-purple-500"
+                      />
                       Retry
                     </Button>
                     <Button
@@ -220,7 +223,7 @@ export function AISelector({ onClose }: AISelectorProps) {
                       onClick={handleDiscard}
                       className="w-full justify-start h-8 py-1 text-left text-xs text-red-600 hover:text-red-700 hover:bg-accent/40"
                     >
-                      <X className="h-3 w-3 mr-1 text-red-500" />
+                      <XIcon className="h-3 w-3 mr-1 text-red-500" />
                       Discard
                     </Button>
                   </div>
@@ -233,46 +236,10 @@ export function AISelector({ onClose }: AISelectorProps) {
           {!completion && !error && isLoading && (
             <div className="py-4 flex items-center gap-3 text-center text-gray-500 p-2">
               <p className="text-xs pl-2">Thinking</p>
-              <svg
-                height={24}
-                viewBox="0 0 24 24"
-                width={24}
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <title>Loading...</title>
-                <circle cx="4" cy="12" fill="#8b5cf6" r="2">
-                  <animate
-                    attributeName="cy"
-                    begin="0;ellipsis3.end+0.25s"
-                    calcMode="spline"
-                    dur="0.6s"
-                    id="ellipsis1"
-                    keySplines=".33,.66,.66,1;.33,0,.66,.33"
-                    values="12;6;12"
-                  />
-                </circle>
-                <circle cx="12" cy="12" fill="#3b82f6" r="2">
-                  <animate
-                    attributeName="cy"
-                    begin="ellipsis1.begin+0.1s"
-                    calcMode="spline"
-                    dur="0.6s"
-                    keySplines=".33,.66,.66,1;.33,0,.66,.33"
-                    values="12;6;12"
-                  />
-                </circle>
-                <circle cx="20" cy="12" fill="#10b981" r="2">
-                  <animate
-                    attributeName="cy"
-                    begin="ellipsis1.begin+0.2s"
-                    calcMode="spline"
-                    dur="0.6s"
-                    id="ellipsis3"
-                    keySplines=".33,.66,.66,1;.33,0,.66,.33"
-                    values="12;6;12"
-                  />
-                </circle>
-              </svg>
+              <CircleNotchIcon
+                weight="duotone"
+                className="animate-spin h-6 w-6 text-purple-500"
+              />
             </div>
           )}
         </div>
@@ -282,7 +249,7 @@ export function AISelector({ onClose }: AISelectorProps) {
 
   return (
     <Card
-      className="w-[32rem] shadow-lg border"
+      className="w-lg shadow-lg border"
       style={{
         borderRadius: "0.5rem",
       }}
@@ -322,9 +289,15 @@ export function AISelector({ onClose }: AISelectorProps) {
               disabled={isLoading}
             >
               {isLoading ? (
-                <Loader2 className="h-3 w-3 animate-spin" />
+                <CircleNotchIcon
+                  weight="duotone"
+                  className="h-3 w-3 animate-spin text-purple-600"
+                />
               ) : (
-                <WandSparkles className="h-3 w-3 text-purple-600" />
+                <MagicWandIcon
+                  weight="duotone"
+                  className="h-3 w-3 text-purple-600"
+                />
               )}
             </Button>
           )}
@@ -346,7 +319,10 @@ export function AISelector({ onClose }: AISelectorProps) {
                 className="w-full h-7 text-left hover:bg-accent/40 disabled:opacity-50 hover:cursor-pointer"
               >
                 <div className="flex-1 flex items-center space-x-2">
-                  <IconComponent className="h-3 w-3 text-purple-500" />
+                  <IconComponent
+                    weight="duotone"
+                    className="h-3 w-3 text-purple-500"
+                  />
                   <span className="text-xs font-normal text-gray-900 dark:text-gray-100">
                     {command.label}
                   </span>

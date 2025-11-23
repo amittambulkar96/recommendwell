@@ -12,11 +12,11 @@ import { Editor } from "@tiptap/react";
 import {
   ScissorsIcon,
   CopyIcon,
-  ClipboardPasteIcon,
-  BoldIcon,
-  ItalicIcon,
-  UnderlineIcon,
-} from "lucide-react";
+  ClipboardTextIcon,
+  TextBIcon,
+  TextItalicIcon,
+  TextUnderlineIcon,
+} from "@phosphor-icons/react";
 import { useTiptapEditor } from "@/hooks/use-tiptap-editor";
 // import SiriOrb from "../smoothui/ui/SiriOrb";
 
@@ -136,7 +136,7 @@ export function EditorContextMenu({
           onClick={handleCut}
           className="flex items-center gap-2"
         >
-          <ScissorsIcon className="h-4 w-4" />
+          <ScissorsIcon weight="duotone" className="h-4 w-4" />
           <span>Cut</span>
           <span className="ml-auto text-xs text-muted-foreground">Ctrl+X</span>
         </ContextMenuItem>
@@ -145,7 +145,7 @@ export function EditorContextMenu({
           onClick={handleCopy}
           className="flex items-center gap-2"
         >
-          <CopyIcon className="h-4 w-4" />
+          <CopyIcon weight="duotone" className="h-4 w-4" />
           <span>Copy</span>
           <span className="ml-auto text-xs text-muted-foreground">Ctrl+C</span>
         </ContextMenuItem>
@@ -154,7 +154,7 @@ export function EditorContextMenu({
           onClick={handlePaste}
           className="flex items-center gap-2"
         >
-          <ClipboardPasteIcon className="h-4 w-4" />
+          <ClipboardTextIcon weight="duotone" className="h-4 w-4" />
           <span>Paste</span>
           <span className="ml-auto text-xs text-muted-foreground">Ctrl+V</span>
         </ContextMenuItem>
@@ -165,7 +165,7 @@ export function EditorContextMenu({
           onClick={handleBold}
           className="flex items-center gap-2"
         >
-          <BoldIcon className="h-4 w-4" />
+          <TextBIcon weight="duotone" className="h-4 w-4" />
           <span>Bold</span>
           <span className="ml-auto text-xs text-muted-foreground">Ctrl+B</span>
         </ContextMenuItem>
@@ -174,7 +174,7 @@ export function EditorContextMenu({
           onClick={handleItalic}
           className="flex items-center gap-2"
         >
-          <ItalicIcon className="h-4 w-4" />
+          <TextItalicIcon weight="duotone" className="h-4 w-4" />
           <span>Italic</span>
           <span className="ml-auto text-xs text-muted-foreground">Ctrl+I</span>
         </ContextMenuItem>
@@ -183,7 +183,7 @@ export function EditorContextMenu({
           onClick={handleUnderline}
           className="flex items-center gap-2"
         >
-          <UnderlineIcon className="h-4 w-4" />
+          <TextUnderlineIcon weight="duotone" className="h-4 w-4" />
           <span>Underline</span>
           <span className="ml-auto text-xs text-muted-foreground">Ctrl+U</span>
         </ContextMenuItem>
