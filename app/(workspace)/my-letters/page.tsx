@@ -1,28 +1,19 @@
-"use client";
+import MyLettersGrid from "@/components/workspace/MyLettersGrid";
 
-import { Button } from "@/components/ui/button";
-import { api } from "@/convex/_generated/api";
-import { authClient } from "@/lib/auth-client";
-import { useConvexAuth, useQuery } from "convex/react";
-
-export default function Page() {
-  const userProfile = useQuery(api.users.getUserProfile);
-  const { isAuthenticated, isLoading } = useConvexAuth();
-
-  if (isLoading) return <div>Loading...</div>;
-
+export default function MyLettersPage() {
   return (
-    <div>
-      <h1>Workspace</h1>
-      <div>
-        <p>{userProfile?.name}</p>
-        <p>{userProfile?.email}</p>
+    <div className="container mx-auto h-[calc(100vh-4rem)] px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-xl md:text-2xl font-semibold mb-2 text-left">
+          My Letters
+        </h1>
+        <p className="text-muted-foreground text-sm md:text-base leading-relaxed text-left max-w-2xl">
+          View and manage all your resignation letters. You can continue editing
+          any saved letter or create a new one from our template collection.
+        </p>
       </div>
-      <div>
-        {isAuthenticated && (
-          <Button onClick={() => authClient.signOut()}>Sign out</Button>
-        )}
-      </div>
+
+      <MyLettersGrid />
     </div>
   );
 }

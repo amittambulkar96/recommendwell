@@ -13,6 +13,10 @@ export const createUserProfile = mutation({
       authId: args.authId,
       name: args.name,
       email: args.email,
+      pdfDownloadsUsed: 0,
+      txtDownloadsUsed: 0,
+      savedDocumentsUsed: 0,
+      docDownloadsUsed: 0,
     });
     return newUser;
   },
