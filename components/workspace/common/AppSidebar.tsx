@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,20 +25,17 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
-import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/convex/_generated/api";
 import {
   BookOpenIcon,
   CardsThreeIcon,
   FilePlusIcon,
-  FileTextIcon,
   NotePencilIcon,
 } from "@phosphor-icons/react";
-import { AlertCircle, FileText } from "lucide-react";
+import { useQuery } from "convex/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 
 // Template type based on Prisma schema
 interface Template {
@@ -120,7 +117,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   className="rounded-full"
                 />
                 <p className="text-lg font-bold">
-                  Resign <span className="text-primary -ml-1">Well</span>
+                  Recommend <span className="text-primary -ml-1">Well</span>
                 </p>
               </Link>
             </SidebarMenuButton>

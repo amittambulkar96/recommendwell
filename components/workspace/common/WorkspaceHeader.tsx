@@ -1,14 +1,6 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-import {
-  CommandDialog,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,13 +11,6 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
@@ -35,78 +20,33 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
-import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
-  FileTextIcon,
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { api } from "@/convex/_generated/api";
+import { authClient } from "@/lib/auth-client";
+import {
   GearIcon,
+  ListIcon,
   SignOutIcon,
   UserCircleGearIcon,
-  ListIcon,
 } from "@phosphor-icons/react";
+import { useQuery } from "convex/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useQuery } from "convex/react";
-import { Input } from "@/components/ui/input";
-import { authClient } from "@/lib/auth-client";
-import { api } from "@/convex/_generated/api";
-
-interface SearchResult {
-  id: string;
-  content: Record<string, unknown>;
-  metadata: Record<string, unknown>;
-  score: number;
-}
+import { useState } from "react";
 
 export default function WorkspaceHeader() {
   const pathname = usePathname();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
-  const [query, setQuery] = useState("");
   const userProfile = useQuery(api.users.getUserProfile);
-  const [isSearching, setIsSearching] = useState(false);
-
-  const [open, setOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setOpen((open) => !open);
-      }
-    };
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, []);
-
-  const search = async () => {
-    try {
-      setIsSearching(true);
-      const res = await fetch(`/api/upstash/search`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query }),
-      });
-      const data = await res.json();
-      setSearchResults(data || []);
-      setIsSearching(false);
-    } catch (error) {
-      setIsSearching(false);
-      setSearchResults([
-        {
-          id: "no-results",
-          content: { title: "No results found" },
-          metadata: {},
-          score: 0,
-        },
-      ]);
-      console.error("Error searching", error);
-    } finally {
-      setIsSearching(false);
-    }
-  };
 
   return (
     <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b px-4 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -154,22 +94,6 @@ export default function WorkspaceHeader() {
               <SheetTitle>Workspace</SheetTitle>
             </SheetHeader>
             <div className="flex flex-col">
-              {/* Search */}
-              <div className="p-4">
-                <div className="relative">
-                  <Input
-                    className=" w-full focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-sm md:placeholder:text-base focus-visible:outline-none"
-                    placeholder="Search templates..."
-                    type="search"
-                    readOnly
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      setOpen(true);
-                    }}
-                  />
-                </div>
-              </div>
-
               {/* Profile */}
               {userProfile?.authId ? (
                 <div className="border-t">
@@ -246,77 +170,7 @@ export default function WorkspaceHeader() {
 
       {/* Right side actions */}
       <div className="ml-auto hidden lg:flex gap-2">
-        <div className="relative">
-          <Input
-            className="pe-11 w-64 focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-sm focus-visible:outline-none"
-            placeholder="Search templates..."
-            type="search"
-            readOnly
-            onClick={() => setOpen(true)}
-          />
-          <div className="text-muted-foreground pointer-events-none absolute inset-y-0 end-0 flex items-center justify-center pe-2">
-            <kbd className="text-muted-foreground/70 inline-flex h-5 max-h-full items-center rounded border px-1 font-[inherit] text-[0.625rem] font-medium">
-              ⌘K
-            </kbd>
-          </div>
-        </div>
-        <CommandDialog open={open} onOpenChange={setOpen} shouldFilter={false}>
-          <div className="relative">
-            <CommandInput
-              value={query}
-              onValueChange={setQuery}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  search();
-                }
-              }}
-              placeholder="Search templates..."
-            />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={search}
-              disabled={isSearching}
-              className=" absolute right-12 top-2"
-            >
-              {isSearching ? "Searching..." : "Search"}
-            </Button>
-          </div>
-          <CommandList>
-            {/* <CommandEmpty>No results found.</CommandEmpty> */}
-            <CommandGroup>
-              {searchResults.map((result) => (
-                <CommandItem
-                  key={result.id}
-                  value={String(
-                    (result.content as Record<string, unknown>)?.title ??
-                      result.id
-                  )}
-                  onSelect={() => {
-                    router.push(`/template/${result.metadata.slug}`);
-                    setOpen(false);
-                  }}
-                >
-                  <FileTextIcon size={16} weight="duotone" aria-hidden="true" />
-
-                  {String(
-                    (result.content as Record<string, unknown>)?.title ??
-                      "Untitled"
-                  )}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </CommandDialog>
-
-        {/* <Button size="sm" asChild>
-          <Link href="/my-letters">
-            <NotePencilIcon size={16} weight="duotone" aria-hidden="true" />
-            My Letters
-          </Link>
-        </Button> */}
-        {userProfile?.id ? (
+        {userProfile?.authId ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <div className="relative cursor-pointer">
