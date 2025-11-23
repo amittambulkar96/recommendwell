@@ -1,5 +1,42 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
+:root {
+  --tt-gray-light-900: #111827;
+  --tt-gray-dark-900: #f9fafb;
+  --tt-gray-light-a-200: #e5e7eb;
+  --tt-gray-dark-a-200: #374151;
+  --tt-bg-color: var(--background);
+  --tt-scrollbar-color: var(--border);
+  --white: #ffffff;
+  --tt-gray-light-600: #4b5563;
+  --tt-gray-dark-a-400: #9ca3af;
+  --tt-gray-light-a-400: #9ca3af;
+
+  /* Additional variables for other nodes */
+  --tt-gray-light-500: #6b7280;
+  --tt-gray-light-a-100: #f3f4f6;
+  --tt-gray-light-a-700: #374151;
+  --tt-gray-light-a-50: #f9fafb;
+  --tt-gray-light-a-800: #1f2937;
+  --tt-gray-light-a-900: #111827;
+  --tt-gray-light-a-500: #6b7280;
+
+  --tt-gray-dark-a-100: #1f2937;
+  --tt-gray-dark-a-700: #d1d5db;
+  --tt-gray-dark-a-50: #111827;
+  --tt-gray-dark-a-800: #f3f4f6;
+  --tt-gray-dark-a-900: #f9fafb;
+  --tt-gray-dark-a-500: #9ca3af;
+
+  --black: #000000;
+}
+
+.tiptap.ProseMirror {
+  ::selection {
+    background-color: #d5e3f392; /* blue-200 - lighter background for better visibility */
+  }
+}
+
 body {
   --tt-toolbar-height: 44px;
   --tt-theme-text: var(--tt-gray-light-900);

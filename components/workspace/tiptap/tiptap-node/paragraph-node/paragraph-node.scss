@@ -42,15 +42,15 @@
   }
 
   // Selection styles
-  &:not(.readonly):not(.ProseMirror-hideselection) {
-    ::selection {
-      background-color: var(--tt-selection-color);
-    }
+  // &:not(.readonly):not(.ProseMirror-hideselection) {
+  //   ::selection {
+  //     background-color: var(--tt-selection-color);
+  //   }
 
-    .selection::selection {
-      background: transparent;
-    }
-  }
+  //   .selection::selection {
+  //     background: transparent;
+  //   }
+  // }
 
   .selection {
     display: inline;
