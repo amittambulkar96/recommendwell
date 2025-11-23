@@ -100,14 +100,12 @@ interface Template {
   isPro: boolean;
 }
 interface Document {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
+  _id: string;
+  _creationTime: number;
   description: string;
   name: string;
   content: JSONContent;
   slug: string;
-  previewImageUrl: string | null;
 }
 
 interface TemplateInfo {
@@ -170,11 +168,11 @@ export function SimpleEditor({
   template,
   existingDocumentData,
 }: {
-  initialContent?: string | EditorContent;
+  initialContent?: JSONContent;
   showStaticPreview?: boolean;
   enableStaticRenderer?: boolean;
   existingDocument?: {
-    id: string;
+    _id: string;
     name: string;
     slug: string;
     description: string;
@@ -222,21 +220,6 @@ export function SimpleEditor({
     };
     checkProStatus();
   }, [template, isProUser]);
-
-  // Get user pro status on mount
-  React.useEffect(() => {
-    const fetchProStatus = async () => {
-      try {
-        // const proStatus = await getCurrentUserProStatus();
-
-        setIsProUser(userProfile?.isPro);
-      } catch (error) {
-        console.error("Error checking pro status:", error);
-        setIsProUser(false);
-      }
-    };
-    fetchProStatus();
-  }, []);
 
   // Extensions for static rendering (server-safe) - memoized to prevent re-creation
   const staticExtensions = React.useMemo(
@@ -309,6 +292,17 @@ export function SimpleEditor({
     },
   });
 
+  // Update editor content when initialContent changes
+  React.useEffect(() => {
+    if (!editor || !initialContent) return;
+
+    // Only update if the content is actually different
+    const currentContent = editor.getJSON();
+    if (JSON.stringify(currentContent) !== JSON.stringify(initialContent)) {
+      editor.commands.setContent(initialContent as JSONContent);
+    }
+  }, [editor, initialContent]);
+
   // Debounced autosave to localStorage (1.2s). Always save globally, but restore only on /template/blank
   React.useEffect(() => {
     if (!editor) return;
@@ -344,7 +338,7 @@ export function SimpleEditor({
 
   // Delete document handler
   const handleDeleteDocument = React.useCallback(async () => {
-    if (!existingDocument?.id) return;
+    if (!existingDocument?._id) return;
 
     try {
       setIsDeletingDocument(true);
@@ -365,7 +359,7 @@ export function SimpleEditor({
     } finally {
       setIsDeletingDocument(false);
     }
-  }, [existingDocument?.id, router]);
+  }, [existingDocument?._id, router]);
 
   // Static rendering function
   const renderStaticHTML = React.useCallback(
@@ -495,8 +489,9 @@ export function SimpleEditor({
               </div>
               <div className="flex items-center gap-2">
                 <div className="text-[0.6rem] text-muted-foreground/50 text-right leading-tight">
-                  {existingDocumentData.updatedAt.toLocaleDateString() ||
-                    existingDocumentData.createdAt.toLocaleDateString()}
+                  {new Date(
+                    existingDocumentData._creationTime
+                  ).toLocaleDateString()}
                 </div>
               </div>
             </>

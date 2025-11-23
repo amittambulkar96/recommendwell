@@ -17,6 +17,7 @@ export const createUserProfile = mutation({
       txtDownloadsUsed: 0,
       savedDocumentsUsed: 0,
       docDownloadsUsed: 0,
+      isPro: false,
     });
     return newUser;
   },

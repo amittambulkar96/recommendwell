@@ -27,7 +27,7 @@ import {
 interface DeleteOptionsDropdownProps {
   onDeleteLocalDraft: () => void;
   existingDocument?: {
-    id: string;
+    _id: string;
     name: string;
     slug: string;
     description: string;

@@ -208,7 +208,7 @@ export const MainToolbarContent = ({
   activeUserSession: boolean;
   editor: Editor | null;
   existingDocument?: {
-    id: string;
+    _id: string;
     name: string;
     slug: string;
     description: string;
@@ -552,10 +552,11 @@ export const MainToolbarContent = ({
           activeUserSession={activeUserSession}
           existingDocument={existingDocument}
           documentFormData={documentFormData}
+          setDocumentFormData={setDocumentFormData}
           handleCreateSlug={handleCreateSlug}
           editor={editor}
           setIsSavingDocument={setIsSavingDocument}
-          isSavingDocument
+          isSavingDocument={isSavingDocument}
         />
 
         {/* Save as template */}

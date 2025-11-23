@@ -21,11 +21,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { handleDocumentSubmit } from "@/lib/tiptap/UploadLetterDocument";
 import { Editor } from "@tiptap/react";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useState } from "react";
 
 interface UploadLetterDialogProps {
   activeUserSession: boolean;
+  setDocumentFormData: (data: {
+    documentTitle: string;
+    slug: string;
+    description: string;
+  }) => void;
   existingDocument?: {
-    id: string;
+    _id: string;
     name: string;
     slug: string;
     description: string;
@@ -49,13 +57,18 @@ export default function UploadLetterDialog({
   activeUserSession,
   existingDocument,
   documentFormData,
+  setDocumentFormData,
   handleCreateSlug,
   editor,
   setIsSavingDocument,
   isSavingDocument,
 }: UploadLetterDialogProps) {
+  const addUserLetter = useMutation(api.letters.AddUserLetter);
+  const updateUserLetter = useMutation(api.letters.UpdateUserLetter);
+  const [open, setOpen] = useState(false);
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <Tooltip>
         <TooltipTrigger asChild>
           <DialogTrigger asChild>
@@ -151,10 +164,14 @@ export default function UploadLetterDialog({
             onClick={(e) =>
               handleDocumentSubmit({
                 e,
+                addUserLetter,
+                updateUserLetter,
                 editor,
                 documentFormData,
                 setIsSavingDocument,
+                setDocumentFormData,
                 existingDocument,
+                setOpen,
               })
             }
             disabled={isSavingDocument}

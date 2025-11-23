@@ -14,7 +14,7 @@ export default defineSchema({
     jobTitle: v.optional(v.string()),
     company: v.optional(v.string()),
     country: v.optional(v.string()),
-    PolarOrder: v.optional(v.array(v.string())),
+    isPro: v.boolean(),
   }),
 
   letters: defineTable({
@@ -22,7 +22,6 @@ export default defineSchema({
     slug: v.string(),
     description: v.string(),
     content: v.string(),
-    originalTemplateId: v.optional(v.string()),
     userId: v.id("users"),
   }).index("userId", ["userId"]),
 

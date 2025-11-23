@@ -1,4 +1,6 @@
+import { api } from "@/convex/_generated/api";
 import { Editor, JSONContent } from "@tiptap/react";
+import { useMutation } from "convex/react";
 import { toast } from "sonner";
 
 interface DocumentFormData {
@@ -13,19 +15,31 @@ interface UploadLetterDocumentProps {
   documentFormData: DocumentFormData;
   setIsSavingDocument: (isSaving: boolean) => void;
   existingDocument?: {
-    id: string;
+    _id: string;
     name: string;
     slug: string;
     description: string;
   };
+  setDocumentFormData: (data: {
+    documentTitle: string;
+    slug: string;
+    description: string;
+  }) => void;
+  addUserLetter: any;
+  updateUserLetter: any;
+  setOpen: (open: boolean) => void;
 }
 
 export const handleDocumentSubmit = async ({
   e,
+  addUserLetter,
+  updateUserLetter,
   editor,
   documentFormData,
   setIsSavingDocument,
   existingDocument,
+  setDocumentFormData,
+  setOpen,
 }: UploadLetterDocumentProps) => {
   e.preventDefault();
   setIsSavingDocument(true);
@@ -49,81 +63,76 @@ export const handleDocumentSubmit = async ({
     }
   }
 
-  // Authorization: only logged-in Pro users may save
-  try {
-    const res = await fetch("/api/upload/authorize", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      cache: "no-store",
-    });
-    if (res.status === 401) {
-      toast.error("Please login and upgrade to Pro to save your document");
-      setIsSavingDocument(false);
-      return;
-    }
-    if (res.status === 403) {
-      toast.error("Upgrade to Pro to save documents to the cloud");
-      setIsSavingDocument(false);
-      return;
-    }
-    if (!res.ok) {
-      toast.error("Unable to authorize save. Please try again.");
-      setIsSavingDocument(false);
-      return;
-    }
-
-    setIsSavingDocument(false);
-  } catch (e) {
-    console.error(e);
-    toast.error("Network error. Please try again.");
-    setIsSavingDocument(false);
-    return;
-  } finally {
-    setIsSavingDocument(false);
-  }
-
   const json = editor?.getJSON();
 
   try {
     if (existingDocument) {
-      // const response = await updateDocument(existingDocument.id, {
-      //   name: documentFormData.documentTitle,
-      //   description: documentFormData.description,
-      //   slug: documentFormData.slug,
-      //   content: JSON.parse(JSON.stringify(json)) as object,
-      // });
-      // if (!response.success && response.error)
-      //   throw new Error(response.message);
-      // if (response.success) {
-      //   toast.success("Changes saved");
-      // }
+      const response = await updateUserLetter({
+        _id: existingDocument._id,
+        name: documentFormData.documentTitle,
+        description: documentFormData.description,
+        slug: documentFormData.slug,
+        content: JSON.stringify(json),
+      });
+
+      if (response.ok) {
+        toast.success("Document updated successfully");
+        setDocumentFormData({
+          documentTitle: "",
+          slug: "",
+          description: "",
+        });
+        setOpen(false);
+      } else {
+        switch (response.type) {
+          case "USER_NOT_FOUND":
+            toast.error("User not found");
+            break;
+          case "PRO_REQUIRED":
+            toast.error("Pro subscription required");
+            break;
+          case "NOT_AUTHENTICATED":
+            toast.error("Not authenticated");
+            break;
+          default:
+            toast.error("Unknown error");
+            break;
+        }
+        setOpen(false);
+      }
     } else {
-      //Get blob file from html to image library
-      // const blob = await createLetterImageUpload();
-      // if (!blob) {
-      //   throw new Error("Failed to create preview image");
-      // }
-      // // Convert blob to File and upload to uploadthing
-      // const file = new File([blob], "preview.png", { type: "image/png" });
-      // const uploadThingResponse = await uploadFiles("imageUploader", {
-      //   files: [file],
-      // });
-      // const response = await createDocument({
-      //   name: documentFormData.documentTitle,
-      //   description: documentFormData.description,
-      //   slug: documentFormData.slug,
-      //   content: JSON.parse(JSON.stringify(json)) as object,
-      //   originalTemplateId: "",
-      //   previewImageUrl: null,
-      // });
-      // if (!response.success && response.error)
-      //   throw new Error(response.message);
-      // if (response.success) toast.success("Document created successfully");
-      // setDocumentFormData({
-      //   documentTitle: "",
-      //   slug: "",
-      //   description: "",
-      // });
+      const response = await addUserLetter({
+        name: documentFormData.documentTitle,
+        description: documentFormData.description,
+        slug: documentFormData.slug,
+        content: JSON.stringify(json),
+      });
+
+      if (response.ok && response.letter) {
+        toast.success("Document created successfully");
+        setDocumentFormData({
+          documentTitle: "",
+          slug: "",
+          description: "",
+        });
+        setOpen(false);
+      } else {
+        switch (response.type) {
+          case "USER_NOT_FOUND":
+            toast.error("User not found");
+            break;
+          case "PRO_REQUIRED":
+            toast.error("Pro subscription required");
+            break;
+          case "NOT_AUTHENTICATED":
+            toast.error("Not authenticated");
+            break;
+          default:
+            toast.error("Unknown error");
+            break;
+        }
+        setOpen(false);
+      }
     }
     setIsSavingDocument(false);
   } catch (error) {
@@ -134,7 +143,9 @@ export const handleDocumentSubmit = async ({
       }
     );
     setIsSavingDocument(false);
+    setOpen(false);
   } finally {
     setIsSavingDocument(false);
+    setOpen(false);
   }
 };
