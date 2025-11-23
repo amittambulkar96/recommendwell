@@ -1,3 +1,7 @@
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/workspace/common/AppSidebar";
+import WorkspaceHeader from "@/components/workspace/common/WorkspaceHeader";
+
 export default function WorkspaceLayout({
   children,
 }: {
@@ -5,7 +9,13 @@ export default function WorkspaceLayout({
 }) {
   return (
     <div className="h-screen w-full">
-      <div className="flex-1 overflow-auto">{children}</div>
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset className="h-full">
+          <WorkspaceHeader />
+          <div className="flex-1 overflow-auto">{children}</div>
+        </SidebarInset>
+      </SidebarProvider>
     </div>
   );
 }
