@@ -197,7 +197,8 @@ export function SimpleEditor({
   const pathname = usePathname();
   // Memoize session data to prevent unnecessary re-renders
   // const { session } = useSessionProvider();
-  const userProfile = useQuery(api.users.getUserProfile);
+  const result = useQuery(api.users.getUserProfile);
+  const userProfile = result?.ok ? result.data : null;
 
   const activeUserSession = React.useMemo(() => userProfile, [userProfile]);
 
@@ -246,13 +247,23 @@ export function SimpleEditor({
 
   // Resolve initial content: prefer any global local draft only on /template/blank
   const resolvedInitialContent = React.useMemo(() => {
-    try {
-      const isBlank = pathname === "/template/blank";
-      if (isBlank) {
+    const isBlank = pathname === "/template/blank";
+
+    if (isBlank) {
+      try {
         const saved = localStorage.getItem("resignwell");
-        if (saved) return JSON.parse(saved) as JSONContent;
+        if (saved) {
+          const parsed = JSON.parse(saved) as JSONContent;
+          return parsed;
+        }
+      } catch (error) {
+        console.error("Failed to parse localStorage draft:", error);
       }
-    } catch {}
+      // If no localStorage draft on blank template, return undefined to start fresh
+      return undefined;
+    }
+
+    // For other routes, use initialContent if provided
     return initialContent;
   }, [initialContent, pathname]);
 
@@ -292,16 +303,20 @@ export function SimpleEditor({
     },
   });
 
-  // Update editor content when initialContent changes
+  // Update editor content when initialContent changes (but not on /template/blank to preserve localStorage draft)
   React.useEffect(() => {
     if (!editor || !initialContent) return;
+
+    // Don't override localStorage draft on /template/blank
+    const isBlank = pathname === "/template/blank";
+    if (isBlank) return;
 
     // Only update if the content is actually different
     const currentContent = editor.getJSON();
     if (JSON.stringify(currentContent) !== JSON.stringify(initialContent)) {
       editor.commands.setContent(initialContent as JSONContent);
     }
-  }, [editor, initialContent]);
+  }, [editor, initialContent, pathname]);
 
   // Debounced autosave to localStorage (1.2s). Always save globally, but restore only on /template/blank
   React.useEffect(() => {
@@ -313,7 +328,10 @@ export function SimpleEditor({
       timer = window.setTimeout(() => {
         try {
           localStorage.setItem("resignwell", JSON.stringify(json));
-        } catch {}
+          console.log("Draft saved to localStorage");
+        } catch (error) {
+          console.error("Failed to save draft to localStorage:", error);
+        }
       }, 1200);
     };
     editor.on("update", handler);

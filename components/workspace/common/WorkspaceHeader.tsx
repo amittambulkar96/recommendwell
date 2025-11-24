@@ -45,7 +45,8 @@ export default function WorkspaceHeader() {
   const pathname = usePathname();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const router = useRouter();
-  const userProfile = useQuery(api.users.getUserProfile);
+  const result = useQuery(api.users.getUserProfile);
+  const userProfile = result?.ok ? result.data : null;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -100,7 +101,7 @@ export default function WorkspaceHeader() {
                   <div className="px-4 py-4 flex items-center gap-3">
                     <Avatar className="rounded-lg">
                       <AvatarImage
-                        src={userProfile?.image || ""}
+                        src={userProfile?.imageUrl || ""}
                         alt={userProfile?.name?.charAt(0)}
                       />
                       <AvatarFallback>
@@ -176,7 +177,7 @@ export default function WorkspaceHeader() {
               <div className="relative cursor-pointer">
                 <Avatar className="rounded-lg">
                   <AvatarImage
-                    src={userProfile?.image || ""}
+                    src={userProfile?.imageUrl || ""}
                     alt={userProfile?.name?.charAt(0)}
                   />
                   <AvatarFallback>
@@ -192,7 +193,7 @@ export default function WorkspaceHeader() {
               <DropdownMenuLabel className="flex min-w-0 gap-2 items-center">
                 <Avatar className="rounded-lg">
                   <AvatarImage
-                    src={userProfile?.image || ""}
+                    src={userProfile?.imageUrl || ""}
                     alt={userProfile?.name?.charAt(0)}
                   />
                   <AvatarFallback>

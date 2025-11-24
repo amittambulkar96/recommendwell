@@ -230,7 +230,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
 export function SidebarProUpgradeCard() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const userProfile = useQuery(api.users.getUserProfile);
+  const result = useQuery(api.users.getUserProfile);
+  const userProfile = result?.ok ? result.data : null;
 
   return (
     <>

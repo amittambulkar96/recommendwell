@@ -23,15 +23,51 @@ export const createUserProfile = mutation({
   },
 });
 
+export const updateUserProfile = mutation({
+  args: {
+    id: v.id("users"),
+    name: v.string(),
+    jobTitle: v.string(),
+    company: v.string(),
+    country: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const user = await authComponent.safeGetAuthUser(ctx);
+    if (!user)
+      return {
+        ok: false as const,
+        type: "NOT_AUTHENTICATED" as const,
+        data: null,
+      };
+
+    const updatedUser = await ctx.db.patch(args.id, {
+      name: args.name,
+      jobTitle: args.jobTitle,
+      company: args.company,
+      country: args.country,
+    });
+    return { ok: true as const, type: "SUCCESS" as const, data: updatedUser };
+  },
+});
+
 export const getUserProfile = query({
   handler: async (ctx) => {
     const authUser = await authComponent.safeGetAuthUser(ctx);
-    if (!authUser) return null;
+    if (!authUser)
+      return {
+        ok: false as const,
+        type: "NOT_AUTHENTICATED" as const,
+        data: null,
+      };
 
     const userProfile = await ctx.db
       .query("users")
       .filter((q) => q.eq(q.field("authId"), authUser._id))
       .unique();
-    return userProfile;
+    return {
+      ok: true as const,
+      type: "SUCCESS" as const,
+      data: userProfile,
+    };
   },
 });
