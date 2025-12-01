@@ -45,7 +45,7 @@ export function Hero() {
                 className="gap-2 text-base h-12 px-8 bg-background/50 backdrop-blur-sm"
                 asChild
               >
-                <Link href="#features">Start from Scratch</Link>
+                <Link href="/template/blank">Start from Scratch</Link>
               </Button>
             </div>
 
