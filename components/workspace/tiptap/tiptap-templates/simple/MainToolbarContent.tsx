@@ -5,6 +5,8 @@
 import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { Editor, EditorContent, JSONContent } from "@tiptap/react";
 import * as React from "react";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 // --- UI Primitives ---
 import { Spacer } from "@/components/workspace/tiptap/tiptap-ui-primitive/spacer";
@@ -230,7 +232,9 @@ export const MainToolbarContent = ({
   >(undefined);
   const [templateInfoSuccess, setTemplateInfoSuccess] = useState("");
 
-  // Use object hook for AI template info generation
+  const createTemplate = useMutation(api.templates.CreateTemplate);
+  const updateTemplate = useMutation(api.templates.UpdateTemplate);
+
   const {
     isLoading: isGeneratingTemplateInfo,
     object,
@@ -547,7 +551,6 @@ export const MainToolbarContent = ({
           isDeletingDocument={isDeletingDocument}
         />
 
-        {/* Save on the cloud */}
         <UploadLetterDialog
           activeUserSession={activeUserSession}
           existingDocument={existingDocument}
@@ -559,7 +562,6 @@ export const MainToolbarContent = ({
           isSavingDocument={isSavingDocument}
         />
 
-        {/* Save as template */}
         {showTemplateButton && (
           <UploadTemplateDialog
             activeUserSession={activeUserSession}
@@ -577,6 +579,8 @@ export const MainToolbarContent = ({
             templateInfoData={templateInfoData}
             object={object}
             setTemplateFormData={setTemplateFormData}
+            createTemplate={createTemplate}
+            updateTemplate={updateTemplate}
           />
         )}
       </ToolbarGroup>

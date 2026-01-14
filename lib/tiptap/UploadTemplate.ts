@@ -55,6 +55,8 @@ interface UploadTemplateProps {
   templateInfoData?: TemplateInfo;
   object?: any;
   setTemplateFormData: React.Dispatch<React.SetStateAction<TemplateFormData>>;
+  createTemplate: any;
+  updateTemplate?: any;
 }
 
 export const handleTemplateSubmit = async ({
@@ -67,6 +69,8 @@ export const handleTemplateSubmit = async ({
   templateInfoData,
   object,
   setTemplateFormData,
+  createTemplate,
+  updateTemplate,
 }: UploadTemplateProps) => {
   e.preventDefault();
 
@@ -92,67 +96,66 @@ export const handleTemplateSubmit = async ({
   }
 
   const json = editor?.getJSON();
+  const content = JSON.stringify(json);
 
   try {
     setIsSavingTemplate(true);
 
-    if (existingTemplate) {
-      // Update existing template
-      // const response = await updateTemplate(existingTemplate.id, {
-      //   name: templateFormData.templateName,
-      //   description: templateFormData.description,
-      //   slug: templateFormData.slug,
-      //   content: JSON.parse(JSON.stringify(json)) as object,
-      //   tags: templateFormData.tags.split(",").map((tag) => tag.trim()),
-      //   category: templateFormData.category.toLowerCase(),
-      //   isPro: templateFormData.isProTemplate,
-      //   previewImageUrl: existingTemplate.previewImageUrl,
-      //   templateInfo: templateInfoData || object?.templateInfo || {},
-      // });
+    if (existingTemplate && updateTemplate) {
+      // Update existing template using Convex mutation
+      const result = await updateTemplate({
+        _id: existingTemplate.id,
+        name: templateFormData.templateName,
+        description: templateFormData.description,
+        slug: templateFormData.slug,
+        content: content,
+        tags: templateFormData.tags.split(",").map((tag) => tag.trim()),
+        category: templateFormData.category.toLowerCase(),
+        isPro: templateFormData.isProTemplate,
+        templateInfo: JSON.stringify(templateInfoData || object?.templateInfo || {}),
+      });
 
-      // if (!response.success && response.error)
-      //   throw new Error(response.message);
+      if (result.ok) {
+        toast.success("Template updated successfully");
+      } else {
+        throw new Error(`Failed to update template: ${result.type}`);
+      }
 
-      // if (response.success) toast.success("Template updated successfully");
       // Reset template info success message after save
       setTemplateInfoSuccess("");
+    } else if (createTemplate) {
+      // Create new template using Convex mutation
+      const result = await createTemplate({
+        name: templateFormData.templateName,
+        description: templateFormData.description,
+        slug: templateFormData.slug,
+        content: content,
+        tags: templateFormData.tags.split(",").map((tag) => tag.trim()),
+        category: templateFormData.category.toLowerCase(),
+        isPro: templateFormData.isProTemplate,
+        templateInfo: JSON.stringify(templateInfoData || object?.templateInfo || {}),
+      });
+
+      if (result.ok) {
+        toast.success("Template created successfully");
+        // Reset form only for new templates and clear template info success message
+        setTemplateInfoSuccess("");
+        setTemplateFormData({
+          templateName: "",
+          slug: "",
+          description: "",
+          tags: "",
+          category: "",
+          isProTemplate: false,
+        });
+      } else {
+        if (result.type === "SLUG_EXISTS") {
+          throw new Error("A template with this slug already exists");
+        }
+        throw new Error(`Failed to create template: ${result.type}`);
+      }
     } else {
-      // Create new template
-      // const blob = await createLetterImageUpload();
-      // if (!blob) {
-      //   throw new Error("Failed to create preview image");
-      // }
-      // // Convert blob to File and upload to upload thing
-      // const file = new File([blob], `${templateFormData.slug}.png`, {
-      //   type: "image/png",
-      // });
-      // const uploadThingResponse = await uploadFiles("imageUploader", {
-      //   files: [file],
-      // });
-      // const response = await createTemplate({
-      //   name: templateFormData.templateName,
-      //   description: templateFormData.description,
-      //   slug: templateFormData.slug,
-      //   content: JSON.parse(JSON.stringify(json)) as object,
-      //   tags: templateFormData.tags.split(",").map((tag) => tag.trim()),
-      //   category: templateFormData.category.toLowerCase(),
-      //   isPro: templateFormData.isProTemplate,
-      //   previewImageUrl: null,
-      //   templateInfo: templateInfoData || undefined,
-      // });
-      // if (!response.success && response.error)
-      //   throw new Error(response.message);
-      // if (response.success) toast.success("Template created successfully");
-      // // Reset form only for new templates and clear template info success message
-      // setTemplateInfoSuccess("");
-      // setTemplateFormData({
-      //   templateName: "",
-      //   slug: "",
-      //   description: "",
-      //   tags: "",
-      //   category: "",
-      //   isProTemplate: false,
-      // });
+      throw new Error("No mutation function provided");
     }
   } catch (error) {
     toast.error(

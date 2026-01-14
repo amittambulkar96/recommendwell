@@ -207,20 +207,18 @@ export function SimpleEditor({
     [userProfile?.email]
   );
 
-  // Check pro status and handle template gating
-  const [isProUser, setIsProUser] = React.useState(false);
   const [isGated, setIsGated] = React.useState(false);
 
   React.useEffect(() => {
     const checkProStatus = async () => {
-      if (template?.isPro && !isProUser) {
+      if (template?.isPro && !result?.data?.isPro) {
         setIsGated(true);
       } else {
         setIsGated(false);
       }
     };
     checkProStatus();
-  }, [template, isProUser]);
+  }, [template, result]);
 
   // Extensions for static rendering (server-safe) - memoized to prevent re-creation
   const staticExtensions = React.useMemo(

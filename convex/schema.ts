@@ -34,5 +34,5 @@ export default defineSchema({
     tags: v.array(v.string()),
     category: v.string(),
     isPro: v.boolean(),
-  }),
+  }).index("slug", ["slug"]),
 });
