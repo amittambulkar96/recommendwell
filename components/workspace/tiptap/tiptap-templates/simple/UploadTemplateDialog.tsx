@@ -87,6 +87,8 @@ interface UploadTemplateDialogProps {
     templateInfoData?: TemplateInfo;
     object?: any;
     setTemplateFormData: React.Dispatch<React.SetStateAction<TemplateFormData>>;
+    createTemplate: any;
+    updateTemplate?: any;
   }) => void;
   editor: Editor | null;
   setIsSavingTemplate: (isSaving: boolean) => void;
@@ -95,6 +97,8 @@ interface UploadTemplateDialogProps {
   templateInfoData?: TemplateInfo;
   object?: any;
   setTemplateFormData: React.Dispatch<React.SetStateAction<TemplateFormData>>;
+  createTemplate: any;
+  updateTemplate?: any;
 }
 
 export default function UploadTemplateDialog({
@@ -113,6 +117,8 @@ export default function UploadTemplateDialog({
   templateInfoData,
   object,
   setTemplateFormData,
+  createTemplate,
+  updateTemplate,
 }: UploadTemplateDialogProps) {
   return (
     <Dialog>
@@ -261,6 +267,8 @@ export default function UploadTemplateDialog({
                 templateInfoData,
                 object,
                 setTemplateFormData,
+                createTemplate,
+                updateTemplate,
               })
             }
             disabled={isSavingTemplate}

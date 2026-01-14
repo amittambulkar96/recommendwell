@@ -25,11 +25,20 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ChevronRight } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import {
   BookOpenIcon,
   CardsThreeIcon,
   FilePlusIcon,
+  FileTextIcon,
   NotePencilIcon,
 } from "@phosphor-icons/react";
 import { useQuery } from "convex/react";
@@ -37,18 +46,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-// Template type based on Prisma schema
+// Template type based on Convex schema
 interface Template {
-  id: string;
+  _id: string;
+  _creationTime: number;
   name: string;
   description: string;
   slug: string;
-  content: Record<string, unknown>;
+  content: string;
+  templateInfo: string;
   tags: string[];
+  category: string;
   isPro: boolean;
-  previewImageUrl: string | null;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 // Navigation data with icon metadata so we can reuse consistently across the app
@@ -95,6 +104,9 @@ const data: { navMain: NavSection[] } = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
+
+  // Fetch all templates
+  const templates = useQuery(api.templates.getAllTemplates);
 
   const isActive = (url: string) =>
     pathname === url || pathname.startsWith(`${url}/`);
@@ -152,73 +164,85 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
+            <Collapsible defaultOpen={false} className="group/collapsible">
+              <SidebarGroup>
+                <SidebarGroupLabel
+                  asChild
+                  className="group/label text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm"
+                >
+                  <CollapsibleTrigger>
+                    Templates
+                    {templates && templates.length > 0 && (
+                      <span className="ml-2 text-xs text-muted-foreground">
+                        ({templates.length})
+                      </span>
+                    )}
+                    <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                  </CollapsibleTrigger>
+                </SidebarGroupLabel>
+                <CollapsibleContent>
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      {templates === undefined ? (
+                        // Loading state
+                        Array.from({ length: 4 }).map((_, index) => (
+                          <SidebarMenuItem key={index}>
+                            <div className="flex items-center gap-2 px-3 py-2">
+                              <Skeleton className="h-4 w-4 rounded" />
+                              <Skeleton className="h-4 flex-1 rounded" />
+                            </div>
+                          </SidebarMenuItem>
+                        ))
+                      ) : templates && templates.length > 0 ? (
+                        // Success state with templates
+                        templates.map((template: Template) => (
+                          <SidebarMenuItem key={template._id}>
+                            <SidebarMenuButton
+                              asChild
+                              isActive={isActive(`/template/${template.slug}`)}
+                            >
+                              <Link
+                                href={`/template/${template.slug}`}
+                                className="flex items-center gap-2"
+                              >
+                                <FileTextIcon
+                                  weight="duotone"
+                                  className="h-4 w-4"
+                                />
+                                <span className="truncate max-w-[70%]">
+                                  {template.name}
+                                </span>
+                                {template.isPro && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="ml-auto px-1.5 py-0.3 text-[0.6rem]"
+                                  >
+                                    Pro
+                                  </Badge>
+                                )}
+                              </Link>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        ))
+                      ) : (
+                        // Empty state
+                        <SidebarMenuItem>
+                          <div className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground">
+                            <span>No templates available</span>
+                          </div>
+                        </SidebarMenuItem>
+                      )}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </CollapsibleContent>
+              </SidebarGroup>
+            </Collapsible>
           </React.Fragment>
         ))}
 
-        <Separator className="mt-1" />
+        {/* <Separator className="mt-1" /> */}
 
-        {/* <SidebarGroup>
-          <SidebarGroupLabel>All Templates</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {isPending ? (
-                // Loading state
-                Array.from({ length: 6 }).map((_, index) => (
-                  <SidebarMenuItem key={index}>
-                    <div className="flex items-center gap-2 px-3 py-2">
-                      <Skeleton className="h-4 w-4 rounded" />
-                      <Skeleton className="h-4 flex-1 rounded" />
-                    </div>
-                  </SidebarMenuItem>
-                ))
-              ) : isError ? (
-                // Error state
-                <SidebarMenuItem>
-                  <div className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground">
-                    <AlertCircle className="h-4 w-4" />
-                    <span>Failed to load templates</span>
-                  </div>
-                </SidebarMenuItem>
-              ) : templates && templates.length > 0 ? (
-                // Success state with templates
-                templates.map((template: Template) => (
-                  <SidebarMenuItem key={template.id}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={isActive(`/template/${template.slug}`)}
-                    >
-                      <Link
-                        href={`/template/${template.slug}`}
-                        className="flex items-center gap-2"
-                      >
-                        <FileTextIcon weight="duotone" className="h-4 w-4" />
-                        <span className="truncate max-w-[70%]">
-                          {template.name}
-                        </span>
-                        {template.isPro && (
-                          <Badge
-                            variant="pro"
-                            className="ml-auto px-1.5 py-0.3 text-[0.6rem]"
-                          >
-                            Pro
-                          </Badge>
-                        )}
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))
-              ) : (
-                // Empty state
-                <SidebarMenuItem>
-                  <div className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground">
-                    <FileText className="h-4 w-4" />
-                    <span>No templates available</span>
-                  </div>
-                </SidebarMenuItem>
-              )}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup> */}
+        {/* Templates Section with Collapsible */}
       </SidebarContent>
       <SidebarFooter>
         <SidebarProUpgradeCard />
