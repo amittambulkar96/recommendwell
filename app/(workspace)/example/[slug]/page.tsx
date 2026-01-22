@@ -61,18 +61,13 @@ export default async function ExamplePage({
   };
 
   return (
-    <div className="pt-6">
-      <div className="max-w-min(900px, calc(100% - 4rem)) w-full mx-auto">
-        <ExampleIntroduction
-          exampleName={example.name}
-          exampleInfo={example.exampleInfo}
-        />
-      </div>
+    <div>
       <SimpleEditor
         initialContent={content}
         example={transformedExample}
         existingDocumentData={null}
       />
+      <ExampleIntroduction example={example} content={content} />
     </div>
   );
 }

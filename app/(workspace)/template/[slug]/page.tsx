@@ -38,7 +38,7 @@ export default async function TemplatePage({
     );
   }
 
-  let content = {};
+  let content: JSONContent = {};
   try {
     content = template.content ? JSON.parse(template.content) : {};
   } catch (error) {
@@ -61,17 +61,15 @@ export default async function TemplatePage({
   };
 
   return (
-    <div className="pt-6">
-      <div className="max-w-min(900px, calc(100% - 4rem)) w-full mx-auto">
-        <TemplateIntroduction
-          templateName={template.name}
-          templateInfo={template.templateInfo}
-        />
-      </div>
+    <div>
       <SimpleEditor
         initialContent={content}
         template={transformedTemplate}
         existingDocumentData={null}
+      />
+      <TemplateIntroduction
+        template={template}
+        content={content}
       />
     </div>
   );
