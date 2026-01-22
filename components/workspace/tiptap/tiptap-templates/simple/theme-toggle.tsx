@@ -7,7 +7,7 @@ import { Button } from "@/components/workspace/tiptap/tiptap-ui-primitive/button
 
 // --- Icons ---
 import { MoonStarIcon } from "@/components/workspace/tiptap/tiptap-icons/moon-star-icon";
-import { SunIcon } from "@/components/workspace/tiptap/tiptap-icons/sun-icon";
+import { Sun } from "@/components/workspace/tiptap/tiptap-icons/sun-icon";
 
 export function ThemeToggle() {
   const [isDarkMode, setIsDarkMode] = React.useState<boolean>(false);
@@ -41,7 +41,7 @@ export function ThemeToggle() {
       {isDarkMode ? (
         <MoonStarIcon className="tiptap-button-icon" />
       ) : (
-        <SunIcon className="tiptap-button-icon" />
+        <Sun className="tiptap-button-icon" />
       )}
     </Button>
   );

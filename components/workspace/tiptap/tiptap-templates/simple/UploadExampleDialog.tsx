@@ -18,15 +18,15 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { BookIcon } from "@phosphor-icons/react";
+import { FileTextIcon } from "@phosphor-icons/react";
 import type { Editor } from "@tiptap/react";
 import type {
-  CreateTemplateFn,
-  TemplateEditorModel,
-  UpdateTemplateFn,
+  CreateExampleFn,
+  ExampleEditorModel,
+  UpdateExampleFn,
 } from "@/lib/tiptap/models";
 
-interface TemplateInfo {
+interface ExampleInfo {
   coreComponents: Array<{
     title: string;
     content: string;
@@ -37,14 +37,14 @@ interface TemplateInfo {
   }>;
 }
 
-interface TemplateFormData {
-  templateName: string;
+interface ExampleFormData {
+  exampleName: string;
   slug: string;
   description: string;
   tags: string;
   category: string;
-  isProTemplate: boolean;
-  templateInfo?: {
+  isProExample: boolean;
+  exampleInfo?: {
     coreComponents: Array<{
       title: string;
       content: string;
@@ -56,100 +56,100 @@ interface TemplateFormData {
   };
 }
 
-interface UploadTemplateDialogProps {
+interface UploadExampleDialogProps {
   activeUserSession: boolean;
-  existingTemplate?: TemplateEditorModel | null;
-  templateFormData: TemplateFormData;
+  existingExample?: ExampleEditorModel | null;
+  exampleFormData: ExampleFormData;
   handleCreateSlug: (
-    field: keyof TemplateFormData,
+    field: keyof ExampleFormData,
     value: string | boolean,
-    type: "template"
+    type: "example"
   ) => void;
-  handleGenerateTemplateInfo: () => void;
-  isGeneratingTemplateInfo: boolean;
-  templateInfoSuccess: string;
-  handleTemplateSubmit: (params: {
+  handleGenerateExampleInfo: () => void;
+  isGeneratingExampleInfo: boolean;
+  exampleInfoSuccess: string;
+  handleExampleSubmit: (params: {
     e: React.FormEvent;
     editor: Editor | null;
-    templateFormData: TemplateFormData;
-    setIsSavingTemplate: (isSaving: boolean) => void;
-    existingTemplate?: TemplateEditorModel | null;
-    setTemplateInfoSuccess: (message: string) => void;
-    templateInfoData?: TemplateInfo;
-    object?: { templateInfo?: unknown };
-    setTemplateFormData: React.Dispatch<React.SetStateAction<TemplateFormData>>;
-    createTemplate: CreateTemplateFn;
-    updateTemplate?: UpdateTemplateFn;
+    exampleFormData: ExampleFormData;
+    setIsSavingExample: (isSaving: boolean) => void;
+    existingExample?: ExampleEditorModel | null;
+    setExampleInfoSuccess: (message: string) => void;
+    exampleInfoData?: ExampleInfo;
+    object?: { exampleInfo?: unknown };
+    setExampleFormData: React.Dispatch<React.SetStateAction<ExampleFormData>>;
+    createExample: CreateExampleFn;
+    updateExample?: UpdateExampleFn;
   }) => void;
   editor: Editor | null;
-  setIsSavingTemplate: (isSaving: boolean) => void;
-  isSavingTemplate: boolean;
-  setTemplateInfoSuccess: (message: string) => void;
-  templateInfoData?: TemplateInfo;
-  object?: { templateInfo?: unknown };
-  setTemplateFormData: React.Dispatch<React.SetStateAction<TemplateFormData>>;
-  createTemplate: CreateTemplateFn;
-  updateTemplate?: UpdateTemplateFn;
+  setIsSavingExample: (isSaving: boolean) => void;
+  isSavingExample: boolean;
+  setExampleInfoSuccess: (message: string) => void;
+  exampleInfoData?: ExampleInfo;
+  object?: { exampleInfo?: unknown };
+  setExampleFormData: React.Dispatch<React.SetStateAction<ExampleFormData>>;
+  createExample: CreateExampleFn;
+  updateExample?: UpdateExampleFn;
 }
 
-export default function UploadTemplateDialog({
+export default function UploadExampleDialog({
   activeUserSession,
-  existingTemplate,
-  templateFormData,
+  existingExample,
+  exampleFormData,
   handleCreateSlug,
-  handleGenerateTemplateInfo,
-  isGeneratingTemplateInfo,
-  templateInfoSuccess,
-  handleTemplateSubmit,
+  handleGenerateExampleInfo,
+  isGeneratingExampleInfo,
+  exampleInfoSuccess,
+  handleExampleSubmit,
   editor,
-  setIsSavingTemplate,
-  isSavingTemplate,
-  setTemplateInfoSuccess,
-  templateInfoData,
+  setIsSavingExample,
+  isSavingExample,
+  setExampleInfoSuccess,
+  exampleInfoData,
   object,
-  setTemplateFormData,
-  createTemplate,
-  updateTemplate,
-}: UploadTemplateDialogProps) {
+  setExampleFormData,
+  createExample,
+  updateExample,
+}: UploadExampleDialogProps) {
   return (
     <Dialog>
       <Tooltip>
         <TooltipTrigger asChild>
           <DialogTrigger asChild>
             <Button disabled={!activeUserSession} size="xs" variant="default">
-              <BookIcon weight="duotone" className="size-4" />
+              <FileTextIcon weight="duotone" className="size-4" />
               <span className="ml-1">
-                {existingTemplate ? "Update Template" : "Save as Template"}
+                {existingExample ? "Update Example" : "Save as Example"}
               </span>
             </Button>
           </DialogTrigger>
         </TooltipTrigger>
         <TooltipContent>
-          <p>Save as template</p>
+          <p>Save as example</p>
         </TooltipContent>
       </Tooltip>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {existingTemplate ? "Update template" : "Save as template"}
+            {existingExample ? "Update example" : "Save as example"}
           </DialogTitle>
           <DialogDescription>
-            {existingTemplate
-              ? "Update your template with your latest changes."
-              : "Save your current document as a reusable template for others to use."}
+            {existingExample
+              ? "Update your example with your latest changes."
+              : "Save your current document as a reusable example for others to use."}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="templateName">Template Name</Label>
+            <Label htmlFor="exampleName">Example Name</Label>
             <Input
-              id="templateName"
+              id="exampleName"
               type="text"
-              placeholder="Enter template name"
+              placeholder="Enter example name"
               className="placeholder:text-accent-foreground/60 placeholder:text-xs"
-              value={templateFormData.templateName}
+              value={exampleFormData.exampleName}
               onChange={(e) =>
-                handleCreateSlug("templateName", e.target.value, "template")
+                handleCreateSlug("exampleName", e.target.value, "example")
               }
               required
             />
@@ -161,11 +161,11 @@ export default function UploadTemplateDialog({
               id="slug"
               type="text"
               disabled={true}
-              placeholder="e.g., grateful-teacher-resignation"
+              placeholder="e.g., professional-resignation-example"
               className="placeholder:text-accent-foreground/60 placeholder:text-xs"
-              value={templateFormData.slug}
+              value={exampleFormData.slug}
               onChange={(e) =>
-                handleCreateSlug("slug", e.target.value, "template")
+                handleCreateSlug("slug", e.target.value, "example")
               }
               required
             />
@@ -177,9 +177,9 @@ export default function UploadTemplateDialog({
               id="description"
               placeholder="Enter description"
               className="placeholder:text-accent-foreground/60 placeholder:text-xs"
-              value={templateFormData.description}
+              value={exampleFormData.description}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                handleCreateSlug("description", e.target.value, "template")
+                handleCreateSlug("description", e.target.value, "example")
               }
               required
             />
@@ -190,11 +190,11 @@ export default function UploadTemplateDialog({
             <Input
               id="tags"
               type="text"
-              placeholder="e.g., teacher, resignation, professional"
+              placeholder="e.g., resignation, professional, example"
               className="placeholder:text-accent-foreground/60 placeholder:text-xs"
-              value={templateFormData.tags}
+              value={exampleFormData.tags}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                handleCreateSlug("tags", e.target.value, "template")
+                handleCreateSlug("tags", e.target.value, "example")
               }
             />
           </div>
@@ -206,9 +206,9 @@ export default function UploadTemplateDialog({
               type="text"
               placeholder="e.g., healthcare, 2 weeks notice, notice"
               className="placeholder:text-accent-foreground/60 placeholder:text-xs"
-              value={templateFormData.category}
+              value={exampleFormData.category}
               onChange={(e) =>
-                handleCreateSlug("category", e.target.value, "template")
+                handleCreateSlug("category", e.target.value, "example")
               }
               required
             />
@@ -216,28 +216,28 @@ export default function UploadTemplateDialog({
 
           <div className="flex items-center space-x-2">
             <Checkbox
-              id="isProTemplate"
-              checked={templateFormData.isProTemplate}
+              id="isProExample"
+              checked={exampleFormData.isProExample}
               onCheckedChange={(checked: boolean) =>
-                handleCreateSlug("isProTemplate", checked, "template")
+                handleCreateSlug("isProExample", checked, "example")
               }
             />
-            <Label htmlFor="isProTemplate">Is this a Pro template?</Label>
+            <Label htmlFor="isProExample">Is this a Pro example?</Label>
           </div>
 
           <div className="space-y-2 flex items-center gap-2">
             <Button
               type="button"
-              onClick={handleGenerateTemplateInfo}
-              disabled={isGeneratingTemplateInfo}
+              onClick={handleGenerateExampleInfo}
+              disabled={isGeneratingExampleInfo}
               data-style="outline"
             >
               <span className="mr-2">✨</span>
-              {isGeneratingTemplateInfo
+              {isGeneratingExampleInfo
                 ? "Generating..."
-                : "Generate Template Info"}
+                : "Generate Example Info"}
             </Button>
-            <p className="text-xs text-emerald-600">{templateInfoSuccess}</p>
+            <p className="text-xs text-emerald-600">{exampleInfoSuccess}</p>
           </div>
         </div>
         <DialogFooter>
@@ -248,27 +248,27 @@ export default function UploadTemplateDialog({
             type="button"
             variant="default"
             onClick={(e) =>
-              handleTemplateSubmit({
+              handleExampleSubmit({
                 e,
                 editor,
-                templateFormData,
-                setIsSavingTemplate,
-                existingTemplate,
-                setTemplateInfoSuccess,
-                templateInfoData,
+                exampleFormData,
+                setIsSavingExample,
+                existingExample,
+                setExampleInfoSuccess,
+                exampleInfoData,
                 object,
-                setTemplateFormData,
-                createTemplate,
-                updateTemplate,
+                setExampleFormData,
+                createExample,
+                updateExample,
               })
             }
-            disabled={isSavingTemplate}
+            disabled={isSavingExample}
           >
-            {isSavingTemplate
+            {isSavingExample
               ? "Saving..."
-              : existingTemplate
-                ? "Update Template"
-                : "Save Template"}
+              : existingExample
+                ? "Update Example"
+                : "Save Example"}
           </Button>
         </DialogFooter>
       </DialogContent>

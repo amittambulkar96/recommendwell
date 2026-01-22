@@ -1,19 +1,10 @@
-import { Editor, JSONContent } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import { toast } from "sonner";
-
-interface Template {
-  slug: string;
-  description: string;
-  tags: string[];
-  category: string;
-  id: string;
-  content: JSONContent;
-  name: string;
-  createdAt: Date;
-  updatedAt: Date;
-  previewImageUrl: string | null;
-  isPro: boolean;
-}
+import type {
+  CreateTemplateFn,
+  TemplateEditorModel,
+  UpdateTemplateFn,
+} from "@/lib/tiptap/models";
 
 interface TemplateInfo {
   coreComponents: Array<{
@@ -50,13 +41,13 @@ interface UploadTemplateProps {
   editor: Editor | null;
   templateFormData: TemplateFormData;
   setIsSavingTemplate: (isSaving: boolean) => void;
-  existingTemplate?: Template | null;
+  existingTemplate?: TemplateEditorModel | null;
   setTemplateInfoSuccess: (message: string) => void;
   templateInfoData?: TemplateInfo;
-  object?: any;
+  object?: { templateInfo?: unknown };
   setTemplateFormData: React.Dispatch<React.SetStateAction<TemplateFormData>>;
-  createTemplate: any;
-  updateTemplate?: any;
+  createTemplate: CreateTemplateFn;
+  updateTemplate?: UpdateTemplateFn;
 }
 
 export const handleTemplateSubmit = async ({
@@ -103,8 +94,9 @@ export const handleTemplateSubmit = async ({
 
     if (existingTemplate && updateTemplate) {
       // Update existing template using Convex mutation
+      const templateInfoPayload = templateInfoData ?? object?.templateInfo;
       const result = await updateTemplate({
-        _id: existingTemplate.id,
+        _id: existingTemplate._id,
         name: templateFormData.templateName,
         description: templateFormData.description,
         slug: templateFormData.slug,
@@ -112,7 +104,9 @@ export const handleTemplateSubmit = async ({
         tags: templateFormData.tags.split(",").map((tag) => tag.trim()),
         category: templateFormData.category.toLowerCase(),
         isPro: templateFormData.isProTemplate,
-        templateInfo: JSON.stringify(templateInfoData || object?.templateInfo || {}),
+        ...(templateInfoPayload !== undefined
+          ? { templateInfo: JSON.stringify(templateInfoPayload) }
+          : {}),
       });
 
       if (result.ok) {

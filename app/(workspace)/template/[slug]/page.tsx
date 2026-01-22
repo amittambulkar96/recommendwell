@@ -1,4 +1,5 @@
 import { SimpleEditor } from "@/components/workspace/tiptap/tiptap-templates/simple/simple-editor";
+import { TemplateIntroduction } from "@/components/workspace/common/TemplateIntroduction";
 import { api } from "@/convex/_generated/api";
 import { JSONContent } from "@tiptap/react";
 import { fetchQuery } from "convex/nextjs";
@@ -37,7 +38,7 @@ export default async function TemplatePage({
     );
   }
 
-  let content = {};
+  let content: JSONContent = {};
   try {
     content = template.content ? JSON.parse(template.content) : {};
   } catch (error) {
@@ -50,7 +51,7 @@ export default async function TemplatePage({
     description: template.description,
     tags: template.tags,
     category: template.category,
-    id: template._id,
+    _id: template._id,
     content: content as JSONContent,
     name: template.name,
     createdAt: new Date(template._creationTime),
@@ -60,10 +61,16 @@ export default async function TemplatePage({
   };
 
   return (
-    <SimpleEditor
-      initialContent={content}
-      template={transformedTemplate}
-      existingDocumentData={null}
-    />
+    <div>
+      <SimpleEditor
+        initialContent={content}
+        template={transformedTemplate}
+        existingDocumentData={null}
+      />
+      <TemplateIntroduction
+        template={template}
+        content={content}
+      />
+    </div>
   );
 }

@@ -1,0 +1,256 @@
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { JSONContent } from "@tiptap/react";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import type { Doc } from "@/convex/_generated/dataModel";
+import { StaticContent } from "../tiptap/tiptap-templates/simple/StaticContent";
+// import CheckUserProAndRenderButton from "./CheckUserProAndRenderButton";
+
+type Example = Doc<"examples">;
+
+interface ExampleInfo {
+  coreComponents: Array<{
+    title: string;
+    content: string;
+  }>;
+  customizationTips: Array<{
+    title: string;
+    content: string;
+  }>;
+}
+
+interface ContentStructure {
+  title: string;
+  introduction: string;
+  coreComponents: Array<{
+    title: string;
+    content: string;
+  }>;
+  customizationTips: Array<{
+    title: string;
+    content: string;
+  }>;
+  faq: Array<{
+    id: string;
+    title: string;
+    content: string;
+  }>;
+}
+
+interface ExampleIntroductionProps {
+  example: Example;
+  content: JSONContent;
+}
+
+export async function ExampleIntroduction({
+  example,
+  content,
+}: ExampleIntroductionProps) {
+  const baseFallbackContent: ContentStructure = {
+    title: `Understanding Your ${example.name}`,
+    introduction: `This ${example.name.toLowerCase()} is designed to help you resign professionally and maintain positive relationships with your employer.`,
+    coreComponents: [],
+    customizationTips: [],
+    faq: [],
+  };
+
+  let currentContent: ContentStructure;
+  const exampleInfo: ExampleInfo | undefined = JSON.parse(
+    example.exampleInfo,
+  )[0];
+
+  if (example.exampleInfo) {
+    currentContent = {
+      title: `Understanding Your ${example.name}`,
+      introduction: `This ${example.name.toLowerCase()} is designed to help you resign professionally and maintain positive relationships with your employer.`,
+      coreComponents: exampleInfo?.coreComponents || [],
+      customizationTips: exampleInfo?.customizationTips || [],
+      faq: [],
+    };
+  } else {
+    currentContent = baseFallbackContent;
+  }
+
+  return (
+    <section id="example-introduction" className="container mx-auto px-6 py-40">
+      <div className="text-center mb-16">
+        <h1 className="text-2xl md:text-3xl font-bold mb-4 text-foreground">
+          {currentContent.title}
+        </h1>
+        <p className="text-base text-muted-foreground max-w-3xl mx-auto">
+          {currentContent.introduction}
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-20">
+        <div className="relative">
+          <h2 className="text-lg md:text-2xl font-semibold mb-6">
+            Example Preview
+          </h2>
+
+          {/* <CheckUserProAndRenderButton templateIsPro={example.isPro} /> */}
+          <div
+            className={cn(
+              "bg-background  border border-border rounded-lg p-6 relative",
+            )}
+          >
+            <StaticContent content={content} />
+          </div>
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-semibold mb-6">
+            Understanding This Letter
+          </h2>
+
+          {currentContent.coreComponents.length > 0 && (
+            <div className="mb-8">
+              <h3 className="text-lg font-medium mb-4">Key Components</h3>
+              <div className="space-y-4">
+                {currentContent.coreComponents.map((component, index) => (
+                  <div
+                    key={index}
+                    className="border-l-2 border-primary/20 pl-4"
+                  >
+                    <h4 className="font-medium text-sm mb-2">
+                      {component.title}
+                    </h4>
+                    <p className="text-sm text-muted-foreground">
+                      {component.content}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {currentContent.customizationTips.length > 0 && (
+            <div className="mb-8">
+              <h3 className="text-lg font-medium mb-4">Customization Tips</h3>
+              <div className="space-y-3">
+                {currentContent.customizationTips.map((tip, index) => (
+                  <div key={index} className="bg-muted/50 rounded-lg p-4">
+                    <h4 className="font-medium text-sm mb-2">{tip.title}</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {tip.content}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {currentContent.faq.length > 0 && (
+        <div className="mb-12 max-w-4xl mx-auto">
+          <h2 className="text-2xl font-semibold mb-6 text-center">
+            Frequently Asked Questions
+          </h2>
+          <Accordion
+            type="multiple"
+            className="w-full -space-y-px"
+            defaultValue={currentContent.faq.map((item) => item.id)}
+          >
+            {currentContent.faq.map((item) => (
+              <AccordionItem
+                value={item.id}
+                key={item.id}
+                className="bg-background has-focus-visible:border-ring has-focus-visible:ring-ring/50 relative border px-4 py-1 outline-none first:rounded-t-md last:rounded-b-md last:border-b has-focus-visible:z-10 has-focus-visible:ring-[3px]"
+              >
+                <AccordionTrigger className="justify-start gap-3 rounded-md py-2 text-[15px] leading-6 outline-none hover:no-underline focus-visible:ring-0 [&>svg]:-order-1">
+                  {item.title}
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground ps-7 pb-2">
+                  {item.content}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      )}
+
+      <div className="relative overflow-hidden text-center rounded-2xl border border-border bg-gradient-to-br from-emerald-100/50 via-blue-100/50 to-purple-100/50 dark:from-emerald-900/50 dark:via-blue-900/50 dark:to-purple-900/50 p-8 text-foreground shadow-lg">
+        <div className="pointer-events-none absolute inset-0 opacity-10 [background:radial-gradient(55%_60%_at_0%_0%,_white_0,_transparent_60%)]" />
+        <div className="pointer-events-none absolute inset-0 opacity-10 [background:radial-gradient(45%_55%_at_100%_0%,_white_0,_transparent_60%)]" />
+        <div className="relative z-10">
+          <h2 className="text-2xl font-semibold mb-3">
+            Ready to write your resignation letter?
+          </h2>
+          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+            Use the editor above to customize this example. Keep the right tone
+            and include all the essentials—quickly and confidently.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/categories"
+              className="inline-flex items-center justify-center rounded-md px-6 py-3 text-base font-medium border border-transparent bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            >
+              Browse More Templates
+            </Link>
+            <Link
+              href="/resources/how-to-write-resignation-letter"
+              className="inline-flex items-center justify-center rounded-md px-6 py-3 text-base font-medium border border-input bg-background text-foreground hover:bg-accent transition-colors"
+            >
+              Writing Guide
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const corecomps = [
+  {
+    coreComponents: [
+      {
+        title: "Header Block",
+        content:
+          "Contains the recommender’s name, title, organization, address, and date—establishing credibility and context.",
+      },
+      {
+        title: "Salutation & Case Reference",
+        content:
+          "Opens with a formal greeting and a clear subject line that links the letter to the applicant’s immigration case.",
+      },
+      {
+        title: "Relationship & Duration Statement",
+        content:
+          "States how long and in what capacity the writer knows the applicant, providing the foundation for the endorsement.",
+      },
+      {
+        title: "Character & Contribution Evidence",
+        content:
+          "Highlights key traits and a concrete example that demonstrate the applicant’s positive impact and moral character.",
+      },
+    ],
+    customizationTips: [
+      {
+        title: "Swap the Benefit Type",
+        content:
+          "Replace “application for [benefit]” with the exact visa, waiver, or residency status the applicant is seeking.",
+      },
+      {
+        title: "Quantify the Relationship",
+        content:
+          "Insert specific dates, events, or shared projects to prove the length and depth of your acquaintance.",
+      },
+      {
+        title: "Tailor Traits to Requirements",
+        content:
+          "Choose 2–3 traits that align with the immigration category—e.g., “community service” for cancellation of removal or “exceptional ability” for EB-2 NIW.",
+      },
+      {
+        title: "Add Contact Offer",
+        content:
+          "Include a sentence offering to provide additional information or testify, and supply a phone number or email for credibility.",
+      },
+    ],
+  },
+];
