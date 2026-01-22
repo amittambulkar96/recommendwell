@@ -50,7 +50,7 @@ export default async function TemplatePage({
     description: template.description,
     tags: template.tags,
     category: template.category,
-    id: template._id,
+    _id: template._id,
     content: content as JSONContent,
     name: template.name,
     createdAt: new Date(template._creationTime),

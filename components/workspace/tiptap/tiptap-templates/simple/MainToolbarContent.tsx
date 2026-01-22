@@ -3,10 +3,11 @@
 // import { useSessionProvider } from "@/utils/providers/session-provider";
 // import { getCurrentUserProStatus } from "@/lib/user-pro-status";
 import { experimental_useObject as useObject } from "@ai-sdk/react";
-import { Editor, EditorContent, JSONContent } from "@tiptap/react";
+import type { Editor } from "@tiptap/react";
 import * as React from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import type { ExampleEditorModel, TemplateEditorModel } from "@/lib/tiptap/models";
 
 // --- UI Primitives ---
 import { Spacer } from "@/components/workspace/tiptap/tiptap-ui-primitive/spacer";
@@ -90,6 +91,7 @@ import { handleDownloadPdf } from "@/lib/tiptap/DownloadLetterPDF";
 import { handleDownloadTxt } from "@/lib/tiptap/DownloadLetterText";
 import { handleDownloadDoc } from "@/lib/tiptap/DownloadLetterDoc";
 import { handleTemplateSubmit } from "@/lib/tiptap/UploadTemplate";
+import { handleExampleSubmit } from "@/lib/tiptap/UploadExample";
 import { handleDocumentSubmit } from "@/lib/tiptap/UploadLetterDocument";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -103,36 +105,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { TemplateInfoSchema } from "@/lib/TemplateInfoSchema";
+import { ExampleInfoSchema } from "@/lib/ExampleInfoSchema";
 // import { ButtonProUpgrade } from "@/components/common/ButtonProUpgrade";
 import { Button } from "@/components/ui/button";
 import DownloadOptionsDropdown from "@/components/workspace/tiptap/tiptap-templates/simple/DownloadOptionsDropdown";
 import DeleteOptionsDropdown from "@/components/workspace/tiptap/tiptap-templates/simple/DeleteOptionsDropdown";
 import UploadLetterDialog from "./UploadLetterDialog";
 import UploadTemplateDialog from "./UploadTemplateDialog";
-
-interface Template {
-  slug: string;
-  description: string;
-  tags: string[];
-  category: string;
-  id: string;
-  content: JSONContent;
-  name: string;
-  createdAt: Date;
-  updatedAt: Date;
-  previewImageUrl: string | null;
-  isPro: boolean;
-}
-interface Document {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  description: string;
-  name: string;
-  content: JSONContent;
-  slug: string;
-  previewImageUrl: string | null;
-}
+import UploadExampleDialog from "./UploadExampleDialog";
 
 interface TemplateInfo {
   coreComponents: Array<{
@@ -143,22 +123,6 @@ interface TemplateInfo {
     title: string;
     content: string;
   }>;
-}
-
-interface ContentNode {
-  type: string;
-  attrs?: Record<string, unknown>;
-  content?: ContentNode[];
-  text?: string;
-  marks?: Array<{
-    type: string;
-    attrs?: Record<string, unknown>;
-  }>;
-}
-
-interface EditorContent {
-  type: string;
-  content: ContentNode[];
 }
 
 interface TemplateFormData {
@@ -186,16 +150,48 @@ interface DocumentFormData {
   description: string;
 }
 
+interface ExampleInfo {
+  coreComponents: Array<{
+    title: string;
+    content: string;
+  }>;
+  customizationTips: Array<{
+    title: string;
+    content: string;
+  }>;
+}
+
+interface ExampleFormData {
+  exampleName: string;
+  slug: string;
+  description: string;
+  tags: string;
+  category: string;
+  isProExample: boolean;
+  exampleInfo?: {
+    coreComponents: Array<{
+      title: string;
+      content: string;
+    }>;
+    customizationTips: Array<{
+      title: string;
+      content: string;
+    }>;
+  };
+}
+
 export const MainToolbarContent = ({
   onHighlighterClick,
   onLinkClick,
   // onPreviewClick,
   isMobile,
   showTemplateButton,
+  showExampleButton,
   activeUserSession,
   editor,
   existingDocument,
   existingTemplate,
+  existingExample,
   onDeleteLocalDraft,
   onDeleteDocument,
   isDeletingDocument,
@@ -207,6 +203,7 @@ export const MainToolbarContent = ({
   onPreviewClick?: () => void;
   isMobile: boolean;
   showTemplateButton: boolean;
+  showExampleButton?: boolean;
   activeUserSession: boolean;
   editor: Editor | null;
   existingDocument?: {
@@ -216,7 +213,8 @@ export const MainToolbarContent = ({
     description: string;
   };
   // createLetterImageUpload: () => Promise<Blob | null>;
-  existingTemplate?: Template | null;
+  existingTemplate?: TemplateEditorModel | null;
+  existingExample?: ExampleEditorModel | null;
   onDeleteLocalDraft: () => void;
   onDeleteDocument: () => void;
   isDeletingDocument: boolean;
@@ -235,6 +233,10 @@ export const MainToolbarContent = ({
   const createTemplate = useMutation(api.templates.CreateTemplate);
   const updateTemplate = useMutation(api.templates.UpdateTemplate);
 
+  // Example mutations
+  const createExample = useMutation(api.examples.CreateExample);
+  const updateExample = useMutation(api.examples.UpdateExample);
+
   const {
     isLoading: isGeneratingTemplateInfo,
     object,
@@ -244,6 +246,19 @@ export const MainToolbarContent = ({
     schema: TemplateInfoSchema,
     onFinish() {
       setTemplateInfoSuccess(`Template Info generation completed`);
+    },
+  });
+
+  // Example AI generation
+  const {
+    isLoading: isGeneratingExampleInfo,
+    object: exampleObject,
+    submit: submitExample,
+  } = useObject({
+    api: "/api/ai/generate-example-info",
+    schema: ExampleInfoSchema,
+    onFinish() {
+      setExampleInfoSuccess(`Example Info generation completed`);
     },
   });
 
@@ -258,12 +273,29 @@ export const MainToolbarContent = ({
       templateInfo: undefined,
     });
 
+  const [exampleFormData, setExampleFormData] =
+    React.useState<ExampleFormData>({
+      exampleName: "",
+      slug: "",
+      description: "",
+      tags: "",
+      category: "",
+      isProExample: false,
+      exampleInfo: undefined,
+    });
+
   const [documentFormData, setDocumentFormData] =
     React.useState<DocumentFormData>({
       documentTitle: existingDocument?.name ?? "",
       slug: existingDocument?.slug ?? "",
       description: existingDocument?.description ?? "",
     });
+
+  const [isSavingExample, setIsSavingExample] = useState(false);
+  const [exampleInfoData, setExampleInfoData] = useState<
+    ExampleInfo | undefined
+  >(undefined);
+  const [exampleInfoSuccess, setExampleInfoSuccess] = useState("");
 
   React.useEffect(() => {
     if (existingDocument) {
@@ -289,10 +321,39 @@ export const MainToolbarContent = ({
     }
   }, [existingTemplate]);
 
+  React.useEffect(() => {
+    if (existingExample) {
+      setExampleFormData({
+        exampleName: existingExample.name,
+        slug: existingExample.slug,
+        description: existingExample.description,
+        tags: existingExample.tags.join(", "),
+        category: existingExample.category,
+        isProExample: existingExample.isPro,
+        exampleInfo: undefined,
+      });
+    }
+  }, [existingExample]);
+
+  React.useEffect(() => {
+    if (exampleObject) {
+      setExampleInfoData(exampleObject?.exampleInfo as unknown as ExampleInfo);
+    }
+  }, [exampleObject]);
+
+  const createSlug = (input: string) =>
+    input
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, "") // Remove special characters
+      .replace(/\s+/g, "-") // Replace spaces with hyphens
+      .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
+      .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
+
   const handleCreateSlug = (
-    field: keyof TemplateFormData | keyof DocumentFormData,
+    field: keyof TemplateFormData | keyof DocumentFormData | keyof ExampleFormData,
     value: string | boolean,
-    formType: "template" | "document"
+    formType: "template" | "document" | "example"
   ) => {
     if (formType === "template") {
       setTemplateFormData((prev) => {
@@ -303,14 +364,21 @@ export const MainToolbarContent = ({
 
         // Auto-generate slug from template name
         if (field === "templateName" && typeof value === "string") {
-          const slug = value
-            .toLowerCase()
-            .replace(/[^a-z0-9\s-]/g, "") // Remove special characters
-            .replace(/\s+/g, "-") // Replace spaces with hyphens
-            .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
-            .trim();
+          newData.slug = createSlug(value);
+        }
 
-          newData.slug = slug;
+        return newData;
+      });
+    } else if (formType === "example") {
+      setExampleFormData((prev) => {
+        const newData = {
+          ...prev,
+          [field]: value,
+        };
+
+        // Auto-generate slug from example name
+        if (field === "exampleName" && typeof value === "string") {
+          newData.slug = createSlug(value);
         }
 
         return newData;
@@ -324,14 +392,7 @@ export const MainToolbarContent = ({
 
         // Auto-generate slug from document title
         if (field === "documentTitle" && typeof value === "string") {
-          const slug = value
-            .toLowerCase()
-            .replace(/[^a-z0-9\s-]/g, "") // Remove special characters
-            .replace(/\s+/g, "-") // Replace spaces with hyphens
-            .replace(/-+/g, "-") // Replace multiple hyphens with single hyphen
-            .trim();
-
-          newData.slug = slug;
+          newData.slug = createSlug(value);
         }
 
         return newData;
@@ -353,6 +414,22 @@ export const MainToolbarContent = ({
     }
 
     submit(templateContent);
+  };
+
+  // Handle AI example info generation
+  const handleGenerateExampleInfo = async () => {
+    if (!editor) {
+      toast.error("Editor not ready");
+      return;
+    }
+
+    const exampleContent = editor.getText();
+    if (!exampleContent || exampleContent.trim().length === 0) {
+      toast.error("Please add some content to generate example info");
+      return;
+    }
+
+    submitExample(exampleContent);
   };
 
   React.useEffect(() => {
@@ -581,6 +658,28 @@ export const MainToolbarContent = ({
             setTemplateFormData={setTemplateFormData}
             createTemplate={createTemplate}
             updateTemplate={updateTemplate}
+          />
+        )}
+
+        {showExampleButton && (
+          <UploadExampleDialog
+            activeUserSession={activeUserSession}
+            existingExample={existingExample}
+            exampleFormData={exampleFormData}
+            handleCreateSlug={handleCreateSlug}
+            handleGenerateExampleInfo={handleGenerateExampleInfo}
+            isGeneratingExampleInfo={isGeneratingExampleInfo}
+            exampleInfoSuccess={exampleInfoSuccess}
+            handleExampleSubmit={handleExampleSubmit}
+            editor={editor}
+            setIsSavingExample={setIsSavingExample}
+            isSavingExample={isSavingExample}
+            setExampleInfoSuccess={setExampleInfoSuccess}
+            exampleInfoData={exampleInfoData}
+            object={exampleObject}
+            setExampleFormData={setExampleFormData}
+            createExample={createExample}
+            updateExample={updateExample}
           />
         )}
       </ToolbarGroup>

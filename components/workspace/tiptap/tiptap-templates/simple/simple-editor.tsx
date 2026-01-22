@@ -85,20 +85,8 @@ import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { MainToolbarContent } from "./MainToolbarContent";
 import { MobileToolbarContent } from "./MobileToolbarContent";
+import type { ExampleEditorModel, TemplateEditorModel } from "@/lib/tiptap/models";
 
-interface Template {
-  slug: string;
-  description: string;
-  tags: string[];
-  category: string;
-  id: string;
-  content: JSONContent;
-  name: string;
-  createdAt: Date;
-  updatedAt: Date;
-  previewImageUrl: string | null;
-  isPro: boolean;
-}
 interface Document {
   _id: string;
   _creationTime: number;
@@ -166,6 +154,7 @@ export function SimpleEditor({
   enableStaticRenderer,
   existingDocument,
   template,
+  example,
   existingDocumentData,
 }: {
   initialContent?: JSONContent;
@@ -177,7 +166,8 @@ export function SimpleEditor({
     slug: string;
     description: string;
   };
-  template: Template | null;
+  template?: TemplateEditorModel | null;
+  example?: ExampleEditorModel | null;
   existingDocumentData: Document | null;
 }) {
   const isMobile = useIsMobile();
@@ -207,18 +197,23 @@ export function SimpleEditor({
     [userProfile?.email]
   );
 
+  const showExampleButton = React.useMemo(
+    () => userProfile?.email === process.env.NEXT_PUBLIC_INFO,
+    [userProfile?.email]
+  );
+
   const [isGated, setIsGated] = React.useState(false);
 
   React.useEffect(() => {
     const checkProStatus = async () => {
-      if (template?.isPro && !result?.data?.isPro) {
+      if ((template?.isPro || example?.isPro) && !result?.data?.isPro) {
         setIsGated(true);
       } else {
         setIsGated(false);
       }
     };
     checkProStatus();
-  }, [template, result]);
+  }, [template, example, result]);
 
   // Extensions for static rendering (server-safe) - memoized to prevent re-creation
   const staticExtensions = React.useMemo(
@@ -498,6 +493,38 @@ export function SimpleEditor({
                 </Badge>
               </div>
             </>
+          ) : example ? (
+            <>
+              <div className="text-xs text-muted-foreground/50 max-w-[200px] text-right leading-tight">
+                {example.name}
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge
+                  variant={example.isPro ? "pro" : "outline"}
+                  className="text-xs px-2 py-0.5 opacity-50"
+                >
+                  {example.isPro ? "Pro" : "Free"}
+                </Badge>
+                <Badge
+                  asChild
+                  className="border-primary/50 bg-transparent text-primary/50 hover:text-primary hover:border-primary ease-in-out duration-300 delay-100 cursor-pointer "
+                >
+                  <button
+                    onClick={() => {
+                      document
+                        .getElementById("example-introduction")
+                        ?.scrollIntoView({
+                          behavior: "smooth",
+                        });
+                    }}
+                    className="flex w-auto items-center gap-1"
+                  >
+                    <CaretCircleDownIcon weight="duotone" className="size-4" />
+                    More Info
+                  </button>
+                </Badge>
+              </div>
+            </>
           ) : existingDocumentData ? (
             <>
               <div className="text-xs text-muted-foreground/50 max-w-[200px] text-right leading-tight">
@@ -549,10 +576,12 @@ export function SimpleEditor({
               }
               isMobile={isMobile}
               showTemplateButton={showTemplateButton}
+              showExampleButton={showExampleButton}
               activeUserSession={!!activeUserSession}
               editor={editor}
               existingDocument={existingDocument}
               existingTemplate={template}
+              existingExample={example}
               onDeleteLocalDraft={handleDeleteLocalDraft}
               onDeleteDocument={handleDeleteDocument}
               isDeletingDocument={isDeletingDocument}
@@ -624,11 +653,12 @@ export function SimpleEditor({
                     </svg>
                   </div>
                   <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                    Pro Template
+                    {example ? "Pro Example" : "Pro Template"}
                   </h2>
                   <p className="text-gray-600 mb-6">
-                    This is a premium template available exclusively for
-                    ResignWell Pro members.
+                    {example
+                      ? "This is a premium example available exclusively for RecommendWell Pro members."
+                      : "This is a premium template available exclusively for RecommendWell Pro members."}
                   </p>
                 </div>
 

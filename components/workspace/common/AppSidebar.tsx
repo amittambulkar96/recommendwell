@@ -11,7 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import {
   Sidebar,
   SidebarContent,
@@ -45,20 +44,6 @@ import { useQuery } from "convex/react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-// Template type based on Convex schema
-interface Template {
-  _id: string;
-  _creationTime: number;
-  name: string;
-  description: string;
-  slug: string;
-  content: string;
-  templateInfo: string;
-  tags: string[];
-  category: string;
-  isPro: boolean;
-}
 
 // Navigation data with icon metadata so we can reuse consistently across the app
 interface NavLinkItem {
@@ -107,6 +92,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   // Fetch all templates
   const templates = useQuery(api.templates.getAllTemplates);
+
+  // Fetch all examples
+  const examples = useQuery(api.examples.getAllExamples);
 
   const isActive = (url: string) =>
     pathname === url || pathname.startsWith(`${url}/`);
@@ -195,7 +183,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         ))
                       ) : templates && templates.length > 0 ? (
                         // Success state with templates
-                        templates.map((template: Template) => (
+                        templates.map((template) => (
                           <SidebarMenuItem key={template._id}>
                             <SidebarMenuButton
                               asChild
@@ -237,6 +225,79 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </CollapsibleContent>
               </SidebarGroup>
             </Collapsible>
+            <Collapsible defaultOpen={false} className="group/collapsible">
+              <SidebarGroup>
+                <SidebarGroupLabel
+                  asChild
+                  className="group/label text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sm"
+                >
+                  <CollapsibleTrigger>
+                    Examples
+                    {examples && examples.length > 0 && (
+                      <span className="ml-2 text-xs text-muted-foreground">
+                        ({examples.length})
+                      </span>
+                    )}
+                    <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                  </CollapsibleTrigger>
+                </SidebarGroupLabel>
+                <CollapsibleContent>
+                  <SidebarGroupContent>
+                    <SidebarMenu>
+                      {examples === undefined ? (
+                        // Loading state
+                        Array.from({ length: 4 }).map((_, index) => (
+                          <SidebarMenuItem key={index}>
+                            <div className="flex items-center gap-2 px-3 py-2">
+                              <Skeleton className="h-4 w-4 rounded" />
+                              <Skeleton className="h-4 flex-1 rounded" />
+                            </div>
+                          </SidebarMenuItem>
+                        ))
+                      ) : examples && examples.length > 0 ? (
+                        // Success state with examples
+                        examples.map((example) => (
+                          <SidebarMenuItem key={example._id}>
+                            <SidebarMenuButton
+                              asChild
+                              isActive={isActive(`/example/${example.slug}`)}
+                            >
+                              <Link
+                                href={`/example/${example.slug}`}
+                                className="flex items-center gap-2"
+                              >
+                                <FileTextIcon
+                                  weight="duotone"
+                                  className="h-4 w-4"
+                                />
+                                <span className="truncate max-w-[70%]">
+                                  {example.name}
+                                </span>
+                                {example.isPro && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="ml-auto px-1.5 py-0.3 text-[0.6rem]"
+                                  >
+                                    Pro
+                                  </Badge>
+                                )}
+                              </Link>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        ))
+                      ) : (
+                        // Empty state
+                        <SidebarMenuItem>
+                          <div className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground">
+                            <span>No examples available</span>
+                          </div>
+                        </SidebarMenuItem>
+                      )}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                </CollapsibleContent>
+              </SidebarGroup>
+            </Collapsible>
           </React.Fragment>
         ))}
 
@@ -253,7 +314,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 }
 
 export function SidebarProUpgradeCard() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [_isDialogOpen, setIsDialogOpen] = useState(false);
   const result = useQuery(api.users.getUserProfile);
   const userProfile = result?.ok ? result.data : null;
 
