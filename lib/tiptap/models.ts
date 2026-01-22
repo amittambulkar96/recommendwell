@@ -48,14 +48,14 @@ export type CreateTemplateResult =
 
 export type UpdateTemplateArgs = {
   _id: Id<"templates">;
-  name: string;
-  slug: string;
-  description: string;
-  content: string;
-  templateInfo: string;
-  tags: string[];
-  category: string;
-  isPro: boolean;
+  name?: string;
+  slug?: string;
+  description?: string;
+  content?: string;
+  templateInfo?: string;
+  tags?: string[];
+  category?: string;
+  isPro?: boolean;
 };
 
 export type UpdateTemplateResult = { ok: true } | MutationFailure;
@@ -80,14 +80,14 @@ export type CreateExampleResult =
 
 export type UpdateExampleArgs = {
   _id: Id<"examples">;
-  name: string;
-  slug: string;
-  description: string;
-  content: string;
-  exampleInfo: string;
-  tags: string[];
-  category: string;
-  isPro: boolean;
+  name?: string;
+  slug?: string;
+  description?: string;
+  content?: string;
+  exampleInfo?: string;
+  tags?: string[];
+  category?: string;
+  isPro?: boolean;
 };
 
 export type UpdateExampleResult = { ok: true } | MutationFailure;

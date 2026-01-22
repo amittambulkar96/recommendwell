@@ -94,6 +94,7 @@ export const handleTemplateSubmit = async ({
 
     if (existingTemplate && updateTemplate) {
       // Update existing template using Convex mutation
+      const templateInfoPayload = templateInfoData ?? object?.templateInfo;
       const result = await updateTemplate({
         _id: existingTemplate._id,
         name: templateFormData.templateName,
@@ -103,7 +104,9 @@ export const handleTemplateSubmit = async ({
         tags: templateFormData.tags.split(",").map((tag) => tag.trim()),
         category: templateFormData.category.toLowerCase(),
         isPro: templateFormData.isProTemplate,
-        templateInfo: JSON.stringify(templateInfoData || object?.templateInfo || {}),
+        ...(templateInfoPayload !== undefined
+          ? { templateInfo: JSON.stringify(templateInfoPayload) }
+          : {}),
       });
 
       if (result.ok) {

@@ -98,6 +98,7 @@ export const handleExampleSubmit = async ({
 
     if (existingExample && updateExample) {
       // Update existing example using Convex mutation
+      const exampleInfoPayload = exampleInfoData ?? object?.exampleInfo;
       const result = await updateExample({
         _id: existingExample._id,
         name: exampleFormData.exampleName,
@@ -107,7 +108,9 @@ export const handleExampleSubmit = async ({
         tags,
         category: exampleFormData.category.toLowerCase(),
         isPro: exampleFormData.isProExample,
-        exampleInfo: JSON.stringify(exampleInfoData || object?.exampleInfo || {}),
+        ...(exampleInfoPayload !== undefined
+          ? { exampleInfo: JSON.stringify(exampleInfoPayload) }
+          : {}),
       });
 
       if (result.ok) {
