@@ -88,6 +88,10 @@ export const handleExampleSubmit = async ({
 
   const json = editor?.getJSON();
   const content = JSON.stringify(json);
+  const tags = exampleFormData.tags
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter(Boolean);
 
   try {
     setIsSavingExample(true);
@@ -100,7 +104,7 @@ export const handleExampleSubmit = async ({
         description: exampleFormData.description,
         slug: exampleFormData.slug,
         content: content,
-        tags: exampleFormData.tags.split(",").map((tag) => tag.trim()),
+        tags,
         category: exampleFormData.category.toLowerCase(),
         isPro: exampleFormData.isProExample,
         exampleInfo: JSON.stringify(exampleInfoData || object?.exampleInfo || {}),
@@ -121,7 +125,7 @@ export const handleExampleSubmit = async ({
         description: exampleFormData.description,
         slug: exampleFormData.slug,
         content: content,
-        tags: exampleFormData.tags.split(",").map((tag) => tag.trim()),
+        tags,
         category: exampleFormData.category.toLowerCase(),
         isPro: exampleFormData.isProExample,
         exampleInfo: JSON.stringify(exampleInfoData || object?.exampleInfo || {}),

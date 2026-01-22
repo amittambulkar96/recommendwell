@@ -98,6 +98,17 @@ export const UpdateExample = mutation({
 
     const { _id, ...updates } = args;
 
+    if (args.slug) {
+      const existingExample = await ctx.db
+        .query("examples")
+        .filter((q) => q.eq(q.field("slug"), args.slug))
+        .unique();
+
+      if (existingExample && existingExample._id !== _id) {
+        return { ok: false as const, type: "SLUG_ALREADY_EXISTS" as const };
+      }
+    }
+
     await ctx.db.patch(_id, updates);
 
     return { ok: true as const };
