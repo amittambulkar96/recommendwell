@@ -1,4 +1,5 @@
 import { SimpleEditor } from "@/components/workspace/tiptap/tiptap-templates/simple/simple-editor";
+import { ExampleIntroduction } from "@/components/workspace/common/ExampleIntroduction";
 import { api } from "@/convex/_generated/api";
 import { JSONContent } from "@tiptap/react";
 import { fetchQuery } from "convex/nextjs";
@@ -60,10 +61,18 @@ export default async function ExamplePage({
   };
 
   return (
-    <SimpleEditor
-      initialContent={content}
-      example={transformedExample}
-      existingDocumentData={null}
-    />
+    <div className="pt-6">
+      <div className="max-w-min(900px, calc(100% - 4rem)) w-full mx-auto">
+        <ExampleIntroduction
+          exampleName={example.name}
+          exampleInfo={example.exampleInfo}
+        />
+      </div>
+      <SimpleEditor
+        initialContent={content}
+        example={transformedExample}
+        existingDocumentData={null}
+      />
+    </div>
   );
 }
