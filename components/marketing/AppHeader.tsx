@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { Poltawski_Nowy } from "next/font/google";
 
 import {
   NavigationMenu,
@@ -32,6 +33,12 @@ import {
 import { ListIcon } from "@phosphor-icons/react/dist/csr/List";
 import { useConvexAuth } from "convex/react";
 
+const poltawskiNowy = Poltawski_Nowy({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-poltawski-nowy",
+});
+
 export default function AppHeader() {
   const { isAuthenticated } = useConvexAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
@@ -46,8 +53,8 @@ export default function AppHeader() {
           height={28}
           className="rounded-full"
         />
-        <p className="text-lg font-bold truncate">
-          Recommend <span className="text-primary -ml-1">Well</span>
+        <p className={`${poltawskiNowy.className} text-lg font-black truncate`}>
+          Recommend <span className="text-[#ff6b4a] -ml-1">Well</span>
         </p>
       </Link>
       {/* Desktop navigation */}
@@ -203,7 +210,9 @@ export default function AppHeader() {
                     height={24}
                     className="rounded-full"
                   />
-                  <span className="font-semibold">Resign Well</span>
+                  <span className={`${poltawskiNowy.className} font-semibold`}>
+                    Resign Well
+                  </span>
                 </div>
               </SheetTitle>
             </SheetHeader>
