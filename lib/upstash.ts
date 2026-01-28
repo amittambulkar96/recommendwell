@@ -21,10 +21,10 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
 
-const TEMPLATE_QUEUE_KEY = "template-generator:queue";
-const TEMPLATE_DONE_KEY = "template-generator:done";
-const EXAMPLE_QUEUE_KEY = "example-generator:queue";
-const EXAMPLE_DONE_KEY = "example-generator:done";
+const TEMPLATE_QUEUE_KEY = "recommendwell:template-generator:queue";
+const TEMPLATE_DONE_KEY = "recommendwell:template-generator:done";
+const EXAMPLE_QUEUE_KEY = "recommendwell:example-generator:queue";
+const EXAMPLE_DONE_KEY = "recommendwell:example-generator:done";
 
 const KEYWORD_DIR = path.join(process.cwd(), "data");
 const TEMPLATE_KEYWORDS_FILE = "template-keywords.json";
@@ -68,10 +68,14 @@ function toQueuePayload(job: QueueJob): string {
   });
 }
 
-export function parseQueuePayload(value: string): QueueJob | null {
-  try {
-    const parsed = JSON.parse(value) as QueueJob;
-    if (!parsed || typeof parsed.slug !== "string") {
+export function parseQueuePayload(value: unknown): QueueJob | null {
+  if (!value) {
+    return null;
+  }
+
+  if (typeof value === "object") {
+    const parsed = value as QueueJob;
+    if (typeof parsed.slug !== "string") {
       return null;
     }
     if (!parsed.tier || !isValidTier(parsed.tier)) {
@@ -82,9 +86,31 @@ export function parseQueuePayload(value: string): QueueJob | null {
       tier: parsed.tier,
       ...(parsed.keyword ? { keyword: parsed.keyword } : {}),
     };
-  } catch {
-    return null;
   }
+
+  if (typeof value === "string") {
+    if (!value.trim().startsWith("{")) {
+      return null;
+    }
+    try {
+      const parsed = JSON.parse(value) as QueueJob;
+      if (!parsed || typeof parsed.slug !== "string") {
+        return null;
+      }
+      if (!parsed.tier || !isValidTier(parsed.tier)) {
+        return null;
+      }
+      return {
+        slug: parsed.slug,
+        tier: parsed.tier,
+        ...(parsed.keyword ? { keyword: parsed.keyword } : {}),
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
 }
 
 function entryToJob(entry: KeywordEntry): QueueJob {

@@ -1,7 +1,6 @@
 import { generateObject } from "ai";
 import { z } from "zod";
 import { generateTemplateInfoCore } from "@/app/api/ai/generate-template-info/route";
-import { createTemplateInternal } from "@/lib/convex-internal";
 
 interface TipTapNode {
   type: string;
@@ -125,7 +124,10 @@ export function textToTipTapJson(text: string): TipTapDocument {
   };
 }
 
-async function generateFreeTemplatePayload(slug: string, contentHint?: string) {
+export async function generateFreeTemplatePayload(
+  slug: string,
+  contentHint?: string,
+) {
   const prompt = `You are an assistant that generates metadata for recommendation letter templates based on the slug.
 This is the title: ${contentHint || slug} and you need to generate below data as per the schema.
 
@@ -146,7 +148,7 @@ Respond in JSON format with the following fields: title, description, tags, cate
       content: z.string(),
       title: z.string(),
       description: z.string(),
-      tags: z.array(z.string().transform((name) => ({ name }))),
+      tags: z.array(z.string()),
       category: z.string(),
     }),
     prompt,
@@ -155,7 +157,10 @@ Respond in JSON format with the following fields: title, description, tags, cate
   return object;
 }
 
-async function generateProTemplatePayload(slug: string, contentHint?: string) {
+export async function generateProTemplatePayload(
+  slug: string,
+  contentHint?: string,
+) {
   const prompt = `You are an assistant that generates metadata for recommendation letter templates based on the slug.
 This is the title: ${contentHint || slug} and you need to generate below data as per the schema.
 
@@ -176,7 +181,7 @@ Respond in JSON format with the following fields: title, description, tags, cate
       content: z.string(),
       title: z.string(),
       description: z.string(),
-      tags: z.array(z.string().transform((name) => ({ name }))),
+      tags: z.array(z.string()),
       category: z.string(),
     }),
     prompt,
@@ -185,77 +190,83 @@ Respond in JSON format with the following fields: title, description, tags, cate
   return object;
 }
 
-async function createTemplateRecord(
+async function buildTemplatePayload(
   slug: string,
   content: string,
   title: string,
   description: string,
-  tags: Array<{ name: string }>,
+  tags: string[],
   category: string,
-  isPro: boolean
+  isPro: boolean,
 ) {
   const tipTapContent = textToTipTapJson(content);
-  const templateInfoResult = await generateTemplateInfoCore(content);
-  const templateInfo = templateInfoResult.templateInfo ?? [];
+  let templateInfo: Array<{ coreComponents: unknown[]; customizationTips: unknown[] }> = [];
+  try {
+    const templateInfoResult = await generateTemplateInfoCore(content);
+    templateInfo = templateInfoResult.templateInfo ?? [];
+  } catch (error) {
+    console.error("Template info generation failed, using fallback:", error);
+    templateInfo = [{ coreComponents: [], customizationTips: [] }];
+  }
 
-  await createTemplateInternal({
+  return {
     name: title,
     description,
     slug,
     content: JSON.stringify(tipTapContent),
     templateInfo: JSON.stringify(templateInfo),
-    tags: tags.map((tag) => tag.name),
+    tags,
     category: category.toLowerCase(),
     isPro,
-  });
+  };
 }
 
-export async function generateFreeTemplateHandler(slug: string, keyword?: string) {
+export async function generateFreeTemplateHandler(
+  slug: string,
+  keyword?: string,
+) {
   try {
-    const object = await generateFreeTemplatePayload(slug, keyword);
-
-    await createTemplateRecord(
+    const objectFree = await generateFreeTemplatePayload(slug, keyword);
+    return await buildTemplatePayload(
       slug,
-      object.content,
-      object.title,
-      object.description,
-      object.tags,
-      object.category,
-      false
+      objectFree.content,
+      objectFree.title,
+      objectFree.description,
+      objectFree.tags,
+      objectFree.category,
+      false,
     );
-
-    return { success: true, slug };
   } catch (error) {
     console.error("Error generating free template:", error);
     throw new Error(
       error instanceof Error
         ? error.message
-        : "Failed to generate the template and related data due to an unexpected error"
+        : "Failed to generate the template and related data due to an unexpected error",
     );
   }
 }
 
-export async function generateProTemplateHandler(slug: string, keyword?: string) {
+export async function generateProTemplateHandler(
+  slug: string,
+  keyword?: string,
+) {
   try {
-    const object = await generateProTemplatePayload(slug, keyword);
-
-    await createTemplateRecord(
+    const objectPro = await generateProTemplatePayload(slug, keyword);
+    return await buildTemplatePayload(
       `${slug}-pro`,
-      object.content,
-      object.title,
-      object.description,
-      object.tags,
-      object.category,
-      true
+      objectPro.content,
+      objectPro.title,
+      objectPro.description,
+      objectPro.tags,
+      objectPro.category,
+      true,
     );
-
-    return { success: true, slug: `${slug}-pro` };
   } catch (error) {
     console.error("Error generating pro template:", error);
     throw new Error(
       error instanceof Error
         ? error.message
-        : "Failed to generate the template and related data due to an unexpected error"
+        : "Failed to generate the template and related data due to an unexpected error",
     );
   }
 }

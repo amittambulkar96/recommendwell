@@ -8,13 +8,31 @@ export const maxDuration = 300;
 const SYSTEM_PROMPT = `You are an AI assistant specialized in analyzing recommendation letter examples. Your task is to analyze the provided example content and generate structured information about its core components and customization tips.
 
 Analyze the example and provide:
-1.  **Core Components**: Exactly 4 core components. Each must have a 'title' and 'content'.
-2.  **Customization Tips**: Exactly 4 customization tips. Each must have a 'title' and 'content'.
+1.  **Core Components**: Exactly 4 core components. Each must have a "title" and "content".
+2.  **Customization Tips**: Exactly 4 customization tips. Each must have a "title" and "content".
 
 Each core component should identify a key structural element of the recommendation letter example.
 Each customization tip should provide practical advice for adapting the example to different situations.
 
-Return the analysis in a structured format. The final output must be a JSON object with a single key "exampleInfo", which contains an array with a single object. This object should have two keys: "coreComponents" and "customizationTips". Do not use 'description' as a key; use 'content' instead.`;
+Return ONLY valid JSON. The final output must be a JSON object with a single key "exampleInfo", which contains an array with a single object. That object MUST have exactly two keys: "coreComponents" and "customizationTips".
+- Do NOT include customization tips inside coreComponents.
+- Do NOT omit customizationTips.
+- Do NOT add extra keys.
+- Do NOT use "description"; use "content" instead.
+
+JSON shape example:
+{
+  "exampleInfo": [
+    {
+      "coreComponents": [
+        { "title": "...", "content": "..." }
+      ],
+      "customizationTips": [
+        { "title": "...", "content": "..." }
+      ]
+    }
+  ]
+}`;
 
 export async function generateExampleInfoCore(content: string) {
   const { object } = await generateObject({

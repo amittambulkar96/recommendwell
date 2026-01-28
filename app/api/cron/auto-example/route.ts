@@ -16,6 +16,7 @@ const receiver = new Receiver({
 });
 
 export async function POST(req: NextRequest) {
+  let job: Awaited<ReturnType<typeof claimNextExampleJob>> = null;
   try {
     const rawBody = await req.text();
     const signature = req.headers.get("upstash-signature");
@@ -35,45 +36,81 @@ export async function POST(req: NextRequest) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const job = await claimNextExampleJob();
+    job = await claimNextExampleJob();
     if (!job) {
       return NextResponse.json({ message: "No pending example jobs" });
     }
+    const freePromise =
+      job.tier === "free" || job.tier === "both"
+        ? generateFreeExampleHandler(job.slug, job.keyword)
+        : Promise.resolve(null);
+    const proPromise =
+      job.tier === "pro" || job.tier === "both"
+        ? generateProExampleHandler(job.slug, job.keyword)
+        : Promise.resolve(null);
 
-    try {
-      const tasks: Array<Promise<unknown>> = [];
-      if (job.tier === "free" || job.tier === "both") {
-        tasks.push(generateFreeExampleHandler(job.slug, job.keyword));
-      }
-      if (job.tier === "pro" || job.tier === "both") {
-        tasks.push(generateProExampleHandler(job.slug, job.keyword));
-      }
-
-      if (tasks.length === 0) {
-        throw new Error(`Unsupported tier: ${job.tier}`);
-      }
-
-      await Promise.all(tasks);
-      await markExampleJobDone(job);
-
-      return NextResponse.json({
-        success: true,
-        slug: job.slug,
-        tier: job.tier,
-      });
-    } catch (error) {
-      console.error(`Failed to generate example for ${job.slug}:`, error);
-      await addExampleJobBackToQueue(job);
-      return NextResponse.json(
-        { error: "Example generation failed", slug: job.slug, tier: job.tier },
-        { status: 500 }
-      );
+    if (job.tier !== "free" && job.tier !== "pro" && job.tier !== "both") {
+      throw new Error(`Unsupported tier: ${job.tier}`);
     }
+
+    const [freeExample, proExample] = await Promise.all([
+      freePromise,
+      proPromise,
+    ]);
+
+    const baseUrl = process.env.CONVEX_SITE_URL;
+    if (!baseUrl) {
+      throw new Error("Missing CONVEX_SITE_URL for Convex HTTP actions");
+    }
+
+    if (freeExample) {
+      const response = await fetch(
+        `${process.env.CONVEX_SITE_URL}/internal/create-example`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${process.env.CRON_INTERNAL_SECRET}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ example: freeExample }),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to persist free example payload");
+      }
+    }
+
+    if (proExample) {
+      const response = await fetch(`${baseUrl}/internal/create-example`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.CRON_INTERNAL_SECRET}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ example: proExample }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to persist pro example payload");
+      }
+    }
+
+    await markExampleJobDone(job);
+
+    return NextResponse.json({
+      success: true,
+      slug: job.slug,
+      tier: job.tier,
+    });
   } catch (error) {
     console.error("Cron API error:", error);
+    if (job) {
+      await addExampleJobBackToQueue(job);
+    }
     return NextResponse.json(
       { error: "Internal server error, please try again" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

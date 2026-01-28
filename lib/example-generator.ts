@@ -1,7 +1,6 @@
 import { generateObject } from "ai";
 import { z } from "zod";
 import { generateExampleInfoCore } from "@/app/api/ai/generate-example-info/route";
-import { createExampleInternal } from "@/lib/convex-internal";
 
 interface TipTapNode {
   type: string;
@@ -135,7 +134,7 @@ Respond in JSON format with the following fields: title, description, tags, cate
       content: z.string(),
       title: z.string(),
       description: z.string(),
-      tags: z.array(z.string().transform((name) => ({ name }))),
+      tags: z.array(z.string()),
       category: z.string(),
     }),
     prompt,
@@ -165,7 +164,7 @@ Respond in JSON format with the following fields: title, description, tags, cate
       content: z.string(),
       title: z.string(),
       description: z.string(),
-      tags: z.array(z.string().transform((name) => ({ name }))),
+      tags: z.array(z.string()),
       category: z.string(),
     }),
     prompt,
@@ -174,36 +173,41 @@ Respond in JSON format with the following fields: title, description, tags, cate
   return object;
 }
 
-async function createExampleRecord(
+async function buildExamplePayload(
   slug: string,
   content: string,
   title: string,
   description: string,
-  tags: Array<{ name: string }>,
+  tags: string[],
   category: string,
   isPro: boolean
 ) {
   const tipTapContent = textToTipTapJson(content);
-  const exampleInfoResult = await generateExampleInfoCore(content);
-  const exampleInfo = exampleInfoResult.exampleInfo ?? [];
+  let exampleInfo: Array<{ coreComponents: unknown[]; customizationTips: unknown[] }> = [];
+  try {
+    const exampleInfoResult = await generateExampleInfoCore(content);
+    exampleInfo = exampleInfoResult.exampleInfo ?? [];
+  } catch (error) {
+    console.error("Example info generation failed, using fallback:", error);
+    exampleInfo = [{ coreComponents: [], customizationTips: [] }];
+  }
 
-  await createExampleInternal({
+  return {
     name: title,
     description,
     slug,
     content: JSON.stringify(tipTapContent),
     exampleInfo: JSON.stringify(exampleInfo),
-    tags: tags.map((tag) => tag.name),
+    tags,
     category: category.toLowerCase(),
     isPro,
-  });
+  };
 }
 
 export async function generateFreeExampleHandler(slug: string, keyword?: string) {
   try {
     const object = await generateFreeExamplePayload(slug, keyword);
-
-    await createExampleRecord(
+    return await buildExamplePayload(
       slug,
       object.content,
       object.title,
@@ -212,8 +216,6 @@ export async function generateFreeExampleHandler(slug: string, keyword?: string)
       object.category,
       false
     );
-
-    return { success: true, slug };
   } catch (error) {
     console.error("Error generating free example:", error);
     throw new Error(
@@ -227,8 +229,7 @@ export async function generateFreeExampleHandler(slug: string, keyword?: string)
 export async function generateProExampleHandler(slug: string, keyword?: string) {
   try {
     const object = await generateProExamplePayload(slug, keyword);
-
-    await createExampleRecord(
+    return await buildExamplePayload(
       `${slug}-pro`,
       object.content,
       object.title,
@@ -237,8 +238,6 @@ export async function generateProExampleHandler(slug: string, keyword?: string) 
       object.category,
       true
     );
-
-    return { success: true, slug: `${slug}-pro` };
   } catch (error) {
     console.error("Error generating pro example:", error);
     throw new Error(
