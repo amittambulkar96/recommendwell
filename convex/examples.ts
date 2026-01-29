@@ -1,4 +1,4 @@
-import { mutation, query } from "./_generated/server";
+import { internalMutation, mutation, query } from "./_generated/server";
 import { v } from "convex/values";
 import { authComponent } from "./authComponent";
 
@@ -75,6 +75,24 @@ export const CreateExample = mutation({
     });
 
     return { ok: true as const, exampleId };
+  },
+});
+
+export const CreateExampleInternal = internalMutation({
+  args: {
+    name: v.string(),
+    slug: v.string(),
+    description: v.string(),
+    content: v.string(),
+    exampleInfo: v.string(),
+    tags: v.array(v.string()),
+    category: v.string(),
+    isPro: v.boolean(),
+  },
+  handler: async () => {
+    // TODO: Implement internal example creation for cron jobs.
+    // This should bypass auth and enforce slug uniqueness.
+    throw new Error("CreateExampleInternal not implemented");
   },
 });
 

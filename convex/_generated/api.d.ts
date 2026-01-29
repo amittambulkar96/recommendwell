@@ -13,6 +13,7 @@ import type * as authComponent from "../authComponent.js";
 import type * as examples from "../examples.js";
 import type * as http from "../http.js";
 import type * as letters from "../letters.js";
+import type * as templateExampleJobs from "../templateExampleJobs.js";
 import type * as templates from "../templates.js";
 import type * as users from "../users.js";
 
@@ -28,6 +29,7 @@ declare const fullApi: ApiFromModules<{
   examples: typeof examples;
   http: typeof http;
   letters: typeof letters;
+  templateExampleJobs: typeof templateExampleJobs;
   templates: typeof templates;
   users: typeof users;
 }>;
