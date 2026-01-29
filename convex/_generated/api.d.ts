@@ -10,6 +10,7 @@
 
 import type * as auth from "../auth.js";
 import type * as authComponent from "../authComponent.js";
+import type * as categories from "../categories.js";
 import type * as examples from "../examples.js";
 import type * as http from "../http.js";
 import type * as letters from "../letters.js";
@@ -26,6 +27,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   authComponent: typeof authComponent;
+  categories: typeof categories;
   examples: typeof examples;
   http: typeof http;
   letters: typeof letters;
