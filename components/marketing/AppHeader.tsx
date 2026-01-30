@@ -41,7 +41,7 @@ const poltawskiNowy = Poltawski_Nowy({
 export default function AppHeader() {
   const { isAuthenticated } = useConvexAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
-  const categoryIndex = useQuery((api as any).categories.getCategoryIndex);
+  const categoryIndex = useQuery(api.categories.getCategoryIndex);
   const isLoadingCategories = categoryIndex === undefined;
   const featuredCategories = React.useMemo(() => {
     if (!categoryIndex?.length) return [];
@@ -156,32 +156,25 @@ export default function AppHeader() {
                   </NavigationMenuLink>
                 </li>
                 <ListItem
-                  href="/resources/how-to-write-resignation-letter"
+                  href="/resources/how-to-write-recommendation-letter"
                   title="How to Write"
                   icon={<BookOpenIcon size={32} weight="duotone" />}
                 >
-                  How to write a resignation letter
+                  How to write a recommendation letter
                 </ListItem>
                 <ListItem
-                  href="/resources/samples-and-examples"
-                  title="Samples and Examples"
-                  icon={<ClipboardTextIcon size={32} weight="duotone" />}
+                  href="/resources/recommendation-letter-topics"
+                  title="Recommendation Letter Topics"
+                  icon={<FileTextIcon size={32} weight="duotone" />}
                 >
-                  Resignation letter samples & examples
+                  Browse every recommendation letter topic
                 </ListItem>
                 <ListItem
                   href="/resources/blog"
                   title="Blog"
                   icon={<NewspaperIcon size={32} weight="duotone" />}
                 >
-                  Helpful articles - resignation & transitions
-                </ListItem>
-                <ListItem
-                  href="/resources/all-letter-types"
-                  title="All Letter Types"
-                  icon={<FileTextIcon size={32} weight="duotone" />}
-                >
-                  List of all the scenarios of resignation
+                  Helpful articles for writing better letters
                 </ListItem>
               </ul>
             </NavigationMenuContent>
@@ -283,18 +276,18 @@ export default function AppHeader() {
                   Resources
                 </Link>
                 <Link
-                  href="/resources/how-to-write-resignation-letter"
+                  href="/resources/how-to-write-recommendation-letter"
                   className="px-4 py-3  text-sm"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   How to Write
                 </Link>
                 <Link
-                  href="/resources/samples-and-examples"
-                  className="px-4 py-3 border-b text-sm"
+                  href="/resources/recommendation-letter-topics"
+                  className="px-4 py-3  text-sm"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
-                  Samples and Examples
+                  Recommendation Letter Topics
                 </Link>
                 <Link
                   href="/resources/blog"

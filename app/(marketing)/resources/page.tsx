@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { BookOpenIcon, FileTextIcon } from "@phosphor-icons/react/ssr";
+import {
+  BookOpenIcon,
+  FileTextIcon,
+  ListMagnifyingGlassIcon,
+} from "@phosphor-icons/react/ssr";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +35,49 @@ export default function ResourcesPage() {
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <Card className="hover:border-primary/50 transition-colors">
+          <CardHeader>
+            <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+              <ListMagnifyingGlassIcon
+                className="h-5 w-5 text-primary"
+                weight="duotone"
+              />
+            </div>
+            <CardTitle className="text-xl">
+              Recommendation letter topics
+            </CardTitle>
+            <CardDescription>
+              Browse every topic, from teacher and student letters to
+              scholarship and immigration recommendations.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild className="w-full" variant="outline">
+              <Link href="/resources/recommendation-letter-topics">
+                Explore topics
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+        <Card className="hover:border-primary/50 transition-colors">
+          <CardHeader>
+            <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+              <BookOpenIcon className="h-5 w-5 text-primary" weight="duotone" />
+            </div>
+            <CardTitle className="text-xl">How to write</CardTitle>
+            <CardDescription>
+              Step-by-step guidance on writing recommendation letters with the
+              right evidence, tone, and structure.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild className="w-full" variant="outline">
+              <Link href="/resources/how-to-write-recommendation-letter">
+                Read the guide
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
         <Card className="hover:border-primary/50 transition-colors">
           <CardHeader>
             <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">

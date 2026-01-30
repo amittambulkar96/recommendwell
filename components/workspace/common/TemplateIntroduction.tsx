@@ -207,7 +207,7 @@ export async function TemplateIntroduction({
               Browse More Templates
             </Link>
             <Link
-              href="/resources/how-to-write-resignation-letter"
+              href="/resources/how-to-write-recommendation-letter"
               className="inline-flex items-center justify-center rounded-md px-6 py-3 text-base font-medium border border-input bg-background text-foreground hover:bg-accent transition-colors"
             >
               Writing Guide
