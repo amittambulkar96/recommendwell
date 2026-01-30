@@ -193,7 +193,7 @@ export async function TemplateIntroduction({
         <div className="pointer-events-none absolute inset-0 opacity-10 [background:radial-gradient(45%_55%_at_100%_0%,_white_0,_transparent_60%)]" />
         <div className="relative z-10">
           <h2 className="text-2xl font-semibold mb-3">
-            Ready to write your resignation letter?
+            Ready to write your Recommendation letter?
           </h2>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
             Use the editor above to customize this template. Keep the right tone
@@ -207,7 +207,7 @@ export async function TemplateIntroduction({
               Browse More Templates
             </Link>
             <Link
-              href="/resources/how-to-write-resignation-letter"
+              href="/resources/how-to-write-recommendation-letter"
               className="inline-flex items-center justify-center rounded-md px-6 py-3 text-base font-medium border border-input bg-background text-foreground hover:bg-accent transition-colors"
             >
               Writing Guide

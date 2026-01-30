@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 
 export default function Home() {
-  const palette: CSSProperties = {
+  const palette = {
     "--ink": "#0f2a2e",
     "--sea": "#0b3a3f",
     "--sun": "#f6e2b7",
@@ -19,7 +19,7 @@ export default function Home() {
     "--sky": "#a5d7e4",
     "--paper": "#fff7ea",
     "--mint": "#cfe9e4",
-  };
+  } as CSSProperties;
 
   return (
     <main
