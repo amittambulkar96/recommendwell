@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Metadata } from "next";
 
 import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { getBlogPosts, formatDate } from "@/lib/blog-utils";
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export default function BlogPage() {
   const blogPosts = getBlogPosts();
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-6 pt-24 pb-16">
+    <div className="mx-auto w-full max-w-7xl px-6 pt-24 pb-16">
       <div className="mb-10 space-y-4">
         <Badge variant="outline" className="text-xs uppercase tracking-[0.2em]">
           Resources
@@ -41,16 +41,19 @@ export default function BlogPage() {
       </div>
 
       {blogPosts.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-border/70 bg-white/70 p-10 text-center">
-          <p className="text-sm text-muted-foreground">
-            No blog posts yet. Add MDX files in the /blogs directory to publish.
-          </p>
-        </div>
+        <Card className="border-dashed border-border/70 bg-muted/20">
+          <CardContent className="py-10 text-center">
+            <p className="text-sm text-muted-foreground">
+              No blog posts yet. Add MDX files in the /blogs directory to publish.
+            </p>
+          </CardContent>
+        </Card>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {blogPosts.map((post) => (
             <Link key={post.slug} href={`/resources/blog/${post.slug}`}>
-              <Card className="h-full p-5 transition-colors hover:bg-muted/40">
+              <Card className="h-full border-border/60 bg-white/80 transition-colors hover:border-border/90 hover:bg-muted/20">
+                <CardContent className="p-5">
                 <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
                   {formatDate(post.date)}
                 </p>
@@ -69,6 +72,7 @@ export default function BlogPage() {
                     ))}
                   </div>
                 )}
+                </CardContent>
               </Card>
             </Link>
           ))}

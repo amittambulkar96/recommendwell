@@ -26,9 +26,8 @@ export default function CategoryCard({
   exampleCount,
 }: CategoryCardProps) {
   return (
-    <Card className="group relative overflow-hidden border-border/70 bg-white/80 shadow-[0_12px_30px_-26px_rgba(15,42,46,0.5)] transition hover:-translate-y-0.5 hover:border-border/90 hover:shadow-[0_22px_50px_-32px_rgba(15,42,46,0.7)]">
-      <div className="pointer-events-none absolute inset-0 opacity-0 transition group-hover:opacity-100 bg-[radial-gradient(circle_at_top,#ffedd5_0%,transparent_55%)]" />
-      <CardHeader className="relative">
+    <Card className="relative h-full border-border/60 bg-white/80 transition-colors hover:border-border/90 hover:bg-muted/20">
+      <CardHeader>
         <CardTitle className="text-lg font-semibold text-foreground">
           {label}
         </CardTitle>
@@ -36,11 +35,11 @@ export default function CategoryCard({
           {templateCount} templates | {exampleCount} examples
         </CardDescription>
       </CardHeader>
-      <CardContent className="relative flex flex-wrap gap-2">
+      <CardContent className="flex flex-wrap gap-2">
         <Badge variant="outline">{templateCount} Templates</Badge>
         <Badge variant="outline">{exampleCount} Examples</Badge>
       </CardContent>
-      <CardFooter className="relative">
+      <CardFooter>
         <Button asChild size="sm">
           <Link href={`/categories/${slug}`}>
             Explore category

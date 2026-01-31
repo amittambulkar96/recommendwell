@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Poltawski_Nowy } from "next/font/google";
 
 import {
   NavigationMenu,
@@ -31,12 +30,6 @@ import {
 import { ListIcon } from "@phosphor-icons/react/dist/csr/List";
 import { useConvexAuth, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-
-const poltawskiNowy = Poltawski_Nowy({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-poltawski-nowy",
-});
 
 export default function AppHeader() {
   const { isAuthenticated } = useConvexAuth();
@@ -73,15 +66,16 @@ export default function AppHeader() {
 
   return (
     <div className="flex w-full mx-auto max-h-16 h-full max-w-7xl items-center justify-between py-4 px-4 sm:px-6 md:px-10 fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl border-x">
+      {/* <div className="max-w-6xl flex items-center justify-between w-full mx-auto"> */}
       <Link href="/" className="flex items-center gap-2 min-w-0">
-        <Image
+        {/* <Image
           src="https://ofnlrak1w9.ufs.sh/f/ccMrlmkqB1bIyggHDs5T8CQo73IEadUzF6phS09Gvj1iLPYX"
           alt="ResignWell logo"
           width={28}
           height={28}
           className="rounded-full"
-        />
-        <p className={`${poltawskiNowy.className} text-lg font-black truncate`}>
+        /> */}
+        <p className={`text-lg font-black truncate`}>
           Recommend <span className="text-[#ff6b4a] -ml-1">Well</span>
         </p>
       </Link>
@@ -227,9 +221,7 @@ export default function AppHeader() {
                     height={24}
                     className="rounded-full"
                   />
-                  <span className={`${poltawskiNowy.className} font-semibold`}>
-                    Resign Well
-                  </span>
+                  <span className={`font-semibold`}>Resign Well</span>
                 </div>
               </SheetTitle>
             </SheetHeader>
@@ -322,6 +314,7 @@ export default function AppHeader() {
           </SheetContent>
         </Sheet>
       </div>
+      {/* </div> */}
     </div>
   );
 }

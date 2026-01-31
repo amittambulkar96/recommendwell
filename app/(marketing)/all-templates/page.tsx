@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import TemplateCard from "@/components/marketing/TemplateCard";
 import { api } from "@/convex/_generated/api";
 import { fetchQuery } from "convex/nextjs";
@@ -18,7 +19,7 @@ export default async function AllTemplatesPage() {
   const sortedTemplates = templates?.slice().sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-6 pt-24 pb-16">
+    <div className="mx-auto w-full max-w-7xl px-6 pt-24 pb-16">
       <div className="mb-10 space-y-3">
         <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
           Templates
@@ -46,11 +47,13 @@ export default async function AllTemplatesPage() {
           ))}
         </div>
       ) : (
-        <div className="rounded-2xl border border-dashed border-border/70 bg-white/70 p-10 text-center">
-          <p className="text-sm text-muted-foreground">
-            No templates are available yet. Check back soon.
-          </p>
-        </div>
+        <Card className="border-dashed border-border/70 bg-muted/20">
+          <CardContent className="py-10 text-center">
+            <p className="text-sm text-muted-foreground">
+              No templates are available yet. Check back soon.
+            </p>
+          </CardContent>
+        </Card>
       )}
 
       <div className="mt-12">

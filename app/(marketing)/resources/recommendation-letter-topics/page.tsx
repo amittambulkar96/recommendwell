@@ -5,6 +5,7 @@ import { getTopicKeywords } from "@/lib/topic-keywords";
 import TopicSearch from "@/components/marketing/TopicSearch";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 export const metadata: Metadata = {
   title: "Recommendation Letter Topics | RecommendWell",
@@ -28,7 +29,7 @@ export default function RecommendationLetterTopicsPage() {
   const topics = getTopicKeywords();
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-6 pt-24 pb-16">
+    <div className="mx-auto w-full max-w-7xl px-6 pt-24 pb-16">
       <div className="mb-10 space-y-4">
         <Badge variant="outline" className="text-xs uppercase tracking-[0.2em]">
           Resources
@@ -52,17 +53,17 @@ export default function RecommendationLetterTopicsPage() {
         topics={topics}
         basePath="/resources/recommendation-letter-topics"
       />
-      <div className="border-dashed border-t w-full h-px border-border mt-10" />
-      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <Separator className="mt-10" />
+      <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {topics.map((topic) => (
           <Link
             key={`${topic.slug}-${topic.source}`}
             href={`/resources/recommendation-letter-topics/${topic.slug}`}
             className="group"
           >
-            <Card className="h-full p-4 transition-colors group-hover:bg-muted/40">
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-sm font-medium text-muted-foreground group-hover:text-primary">
+            <Card className="h-full border-border/60 bg-white/80 transition-colors hover:border-border/90 hover:bg-muted/20">
+              <div className="flex min-h-[72px] items-center justify-between gap-3 p-5">
+                <p className="text-base font-medium text-foreground">
                   {topic.keyword.charAt(0).toUpperCase() +
                     topic.keyword.slice(1)}
                 </p>

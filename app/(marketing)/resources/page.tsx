@@ -6,6 +6,7 @@ import {
 } from "@phosphor-icons/react/ssr";
 
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -22,12 +23,15 @@ export const metadata = {
 
 export default function ResourcesPage() {
   return (
-    <div className="container mx-auto px-4 py-4 max-w-6xl">
-      <div className="mb-8 mt-20">
-        <h1 className="text-lg md:text-2xl font-semibold mb-2 text-left">
+    <div className="mx-auto w-full max-w-7xl px-6 pt-24 pb-16">
+      <div className="mb-10 space-y-4">
+        <Badge variant="outline" className="text-xs uppercase tracking-[0.2em]">
           Resources
+        </Badge>
+        <h1 className="text-2xl md:text-3xl font-semibold text-foreground">
+          Everything you need to write confidently
         </h1>
-        <p className="text-muted-foreground text-sm md:text-base leading-relaxed text-left max-w-2xl">
+        <p className="text-muted-foreground text-sm md:text-base leading-relaxed max-w-2xl">
           Guides, tips, and insights for writing better recommendation letters.
           Learn best practices, find templates, and improve your letter writing
           skills.
@@ -35,7 +39,7 @@ export default function ResourcesPage() {
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <Card className="hover:border-primary/50 transition-colors">
+        <Card className="border-border/60 bg-white/80 transition-colors hover:border-border/90 hover:bg-muted/20">
           <CardHeader>
             <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
               <ListMagnifyingGlassIcon
@@ -59,7 +63,7 @@ export default function ResourcesPage() {
             </Button>
           </CardContent>
         </Card>
-        <Card className="hover:border-primary/50 transition-colors">
+        <Card className="border-border/60 bg-white/80 transition-colors hover:border-border/90 hover:bg-muted/20">
           <CardHeader>
             <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
               <BookOpenIcon className="h-5 w-5 text-primary" weight="duotone" />
@@ -78,7 +82,7 @@ export default function ResourcesPage() {
             </Button>
           </CardContent>
         </Card>
-        <Card className="hover:border-primary/50 transition-colors">
+        <Card className="border-border/60 bg-white/80 transition-colors hover:border-border/90 hover:bg-muted/20">
           <CardHeader>
             <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
               <BookOpenIcon className="h-5 w-5 text-primary" weight="duotone" />
@@ -98,17 +102,21 @@ export default function ResourcesPage() {
       </div>
 
       {/* Placeholder for future resources */}
-      <div className="mt-12 rounded-lg border border-dashed p-8 text-center">
-        <FileTextIcon
-          className="mx-auto h-10 w-10 text-muted-foreground/50"
-          weight="duotone"
-        />
-        <h3 className="mt-4 text-lg font-medium">More resources coming soon</h3>
-        <p className="mt-2 text-sm text-muted-foreground">
-          We&apos;re working on templates, guides, and tips to help you write
-          better recommendation letters.
-        </p>
-      </div>
+      <Card className="mt-12 border-dashed border-border/70 bg-muted/20 text-center">
+        <CardContent className="py-10">
+          <FileTextIcon
+            className="mx-auto h-10 w-10 text-muted-foreground/50"
+            weight="duotone"
+          />
+          <h3 className="mt-4 text-lg font-medium">
+            More resources coming soon
+          </h3>
+          <p className="mt-2 text-sm text-muted-foreground">
+            We&apos;re working on templates, guides, and tips to help you write
+            better recommendation letters.
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
 }

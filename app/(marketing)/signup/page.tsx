@@ -1,8 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -69,31 +71,32 @@ export default function LoginPage() {
     <section className="bg-linear-to-b from-muted/50 to-background flex min-h-screen px-4 py-16 md:py-32">
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="max-w-100 m-auto h-fit w-full"
+        className="mx-auto h-fit w-full max-w-md"
       >
-        <div className="p-6">
-          <div>
-            <Link href="/" className="flex items-center gap-2">
-              <Image
-                src="https://ofnlrak1w9.ufs.sh/f/ccMrlmkqB1bIyggHDs5T8CQo73IEadUzF6phS09Gvj1iLPYX"
-                alt="ResignWell logo"
-                width={28}
-                height={28}
-                className="rounded-full"
-              />
-              <p className="text-lg font-bold">
-                Resign <span className="text-primary -ml-1">Well</span>
-              </p>
-            </Link>
-            <h1 className="mt-6 text-balance text-sm font-normal">
-              <span className="text-muted-foreground">
-                Welcome to ResignWell!
-              </span>{" "}
-              <span className="text-base md:text-xl font-semibold">
-                Sign up to continue
-              </span>
-            </h1>
-          </div>
+        <Card className="border-border/70 bg-white/90 shadow-[0_24px_60px_-40px_rgba(15,42,46,0.6)]">
+          <CardContent>
+            <div>
+              <Link href="/" className="flex items-center gap-2">
+                <Image
+                  src="https://ofnlrak1w9.ufs.sh/f/ccMrlmkqB1bIyggHDs5T8CQo73IEadUzF6phS09Gvj1iLPYX"
+                  alt="RecommendWell logo"
+                  width={28}
+                  height={28}
+                  className="rounded-full"
+                />
+                <p className="text-lg font-bold">
+                  Recommend <span className="text-primary -ml-1">Well</span>
+                </p>
+              </Link>
+              <h1 className="mt-6 text-balance text-sm font-normal">
+                <span className="text-muted-foreground">
+                  Welcome to RecommendWell!
+                </span>{" "}
+                <span className="text-base md:text-xl font-semibold">
+                  Sign up to continue
+                </span>
+              </h1>
+            </div>
 
           <div className="mt-6 space-y-2">
             <Button
@@ -145,7 +148,7 @@ export default function LoginPage() {
             </Button>
           </div>
 
-          <hr className="mb-5 mt-6" />
+          <Separator className="my-6" />
 
           <div className="space-y-6">
             <div className="space-y-2">
@@ -220,11 +223,12 @@ export default function LoginPage() {
               {isSigningUp ? "Signing up..." : "Sign up"}
             </Button>
           </div>
-        </div>
+        </CardContent>
+        </Card>
 
-        <div className="px-6">
+        <div className="px-6 pt-6">
           <p className="text-muted-foreground text-sm">
-            Already have an account ?
+            Already have an account?
             <Button asChild variant="link" className="px-2">
               <Link href="/login">Login</Link>
             </Button>

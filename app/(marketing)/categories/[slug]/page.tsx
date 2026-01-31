@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import ExampleCard from "@/components/marketing/ExampleCard";
 import TemplateCard from "@/components/marketing/TemplateCard";
 import { api } from "@/convex/_generated/api";
@@ -55,7 +56,7 @@ export default async function CategoryDetailPage({
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-6 pt-24 pb-16">
+    <div className="mx-auto w-full max-w-7xl px-6 pt-24 pb-16">
       <div className="mb-10 space-y-3">
         <Link
           href="/categories"
@@ -90,9 +91,11 @@ export default async function CategoryDetailPage({
             ))}
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-border/70 bg-white/70 p-8 text-sm text-muted-foreground">
-            No templates yet for this category.
-          </div>
+          <Card className="border-dashed border-border/70 bg-muted/20">
+            <CardContent className="py-8 text-sm text-muted-foreground">
+              No templates yet for this category.
+            </CardContent>
+          </Card>
         )}
       </section>
 
@@ -110,9 +113,11 @@ export default async function CategoryDetailPage({
             ))}
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-border/70 bg-white/70 p-8 text-sm text-muted-foreground">
-            No examples yet for this category.
-          </div>
+          <Card className="border-dashed border-border/70 bg-muted/20">
+            <CardContent className="py-8 text-sm text-muted-foreground">
+              No examples yet for this category.
+            </CardContent>
+          </Card>
         )}
       </section>
 

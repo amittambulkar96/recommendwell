@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { getTopicKeywordBySlug, getTopicKeywords } from "@/lib/topic-keywords";
 
 type Params = Promise<{ slug: string }>;
@@ -98,7 +99,7 @@ export default async function RecommendationLetterTopicPage({
     topic.targetType === "example" ? "Browse all examples" : "Browse all templates";
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-6 pt-24 pb-16">
+    <div className="mx-auto w-full max-w-7xl px-6 pt-24 pb-16">
       <Breadcrumb className="mb-10">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -141,27 +142,29 @@ export default async function RecommendationLetterTopicPage({
         </div>
       </div>
 
-      <section className="mt-12 grid gap-6 rounded-2xl border border-border bg-muted/30 p-6">
-        <div>
-          <h2 className="text-lg font-semibold">How to use this topic</h2>
-          <p className="text-sm text-muted-foreground mt-2">
-            Use this page to understand the structure and focus of a {topic.keyword}.
-            The primary link takes you straight to the {topic.source} so you can
-            start writing immediately.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-3">
-          <Link
-            href="/resources/recommendation-letter-topics"
-            className="text-sm text-primary underline"
-          >
-            Back to all topics
-          </Link>
-          <Link href="/resources" className="text-sm text-primary underline">
-            Resources hub
-          </Link>
-        </div>
-      </section>
+      <Card className="mt-12 border-border/70 bg-muted/30">
+        <CardContent className="grid gap-6">
+          <div>
+            <h2 className="text-lg font-semibold">How to use this topic</h2>
+            <p className="text-sm text-muted-foreground mt-2">
+              Use this page to understand the structure and focus of a {topic.keyword}.
+              The primary link takes you straight to the {topic.source} so you can
+              start writing immediately.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/resources/recommendation-letter-topics"
+              className="text-sm text-primary underline"
+            >
+              Back to all topics
+            </Link>
+            <Link href="/resources" className="text-sm text-primary underline">
+              Resources hub
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
 
       {topic.faq.length > 0 && (
         <section className="mt-16">
@@ -173,7 +176,7 @@ export default async function RecommendationLetterTopicPage({
               <AccordionItem
                 key={item.id}
                 value={item.id}
-                className="bg-background border px-4 py-1 first:rounded-t-md last:rounded-b-md"
+                className="bg-background border border-border/70 px-4 py-1 first:rounded-t-xl last:rounded-b-xl"
               >
                 <AccordionTrigger className="justify-start gap-3 py-2 text-sm leading-6">
                   {item.question}

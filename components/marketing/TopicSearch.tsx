@@ -5,7 +5,7 @@ import Link from "next/link";
 import Fuse from "fuse.js";
 
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { TopicKeyword } from "@/lib/topic-keywords";
 
@@ -46,11 +46,13 @@ export default function TopicSearch({ topics, basePath }: TopicSearchProps) {
       {query.trim().length > 0 && (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {results.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-border/70 bg-white/70 p-10 text-center sm:col-span-2 lg:col-span-3">
-              <p className="text-sm text-muted-foreground">
-                No topics match that search. Try a different phrase.
-              </p>
-            </div>
+            <Card className="border-dashed border-border/70 bg-muted/20 sm:col-span-2 lg:col-span-3">
+              <CardContent className="py-10 text-center">
+                <p className="text-sm text-muted-foreground">
+                  No topics match that search. Try a different phrase.
+                </p>
+              </CardContent>
+            </Card>
           ) : (
             results.map((topic) => (
               <Link
@@ -58,9 +60,9 @@ export default function TopicSearch({ topics, basePath }: TopicSearchProps) {
                 href={`${basePath}/${topic.slug}`}
                 className="group"
               >
-                <Card className="h-full p-4 transition-colors group-hover:bg-muted/40">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="text-sm font-medium text-muted-foreground group-hover:text-primary">
+                <Card className="h-full border-border/60 bg-white/80 transition-colors group-hover:border-border/90 group-hover:bg-muted/20">
+                  <CardContent className="flex min-h-[72px] items-center justify-between gap-3 p-5">
+                    <p className="text-base font-medium text-foreground">
                       {topic.keyword.charAt(0).toUpperCase() +
                         topic.keyword.slice(1)}
                     </p>
@@ -70,7 +72,7 @@ export default function TopicSearch({ topics, basePath }: TopicSearchProps) {
                     >
                       {topic.source}
                     </Badge>
-                  </div>
+                  </CardContent>
                 </Card>
               </Link>
             ))

@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { mdxComponents } from "@/mdx-components";
 import { formatDate, getBlogPosts } from "@/lib/blog-utils";
 
@@ -80,7 +81,7 @@ export default async function BlogPostPage({ params }: { params: Params }) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-6 pt-24 pb-16">
+    <div className="mx-auto w-full max-w-5xl px-6 pt-24 pb-16">
       <Breadcrumb className="mb-10">
         <BreadcrumbList>
           <BreadcrumbItem>
@@ -122,38 +123,42 @@ export default async function BlogPostPage({ params }: { params: Params }) {
         )}
       </header>
 
-      <article className="prose max-w-none">
-        <MDXRemote
-          source={blogPost.content}
-          components={mdxComponents}
-          options={{
-            mdxOptions: {
-              remarkPlugins: [remarkGfm],
-            },
-          }}
-        />
-      </article>
+      <Card className="border-border/70 bg-white/80">
+        <CardContent className="prose max-w-none">
+          <MDXRemote
+            source={blogPost.content}
+            components={mdxComponents}
+            options={{
+              mdxOptions: {
+                remarkPlugins: [remarkGfm],
+              },
+            }}
+          />
+        </CardContent>
+      </Card>
 
-      <section className="mt-12 rounded-2xl border border-border bg-muted/30 p-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 className="text-lg font-semibold">Write your next letter</h2>
-            <p className="text-sm text-muted-foreground">
-              Start from a template or explore topics tailored to your scenario.
-            </p>
+      <Card className="mt-12 border-border/70 bg-muted/30">
+        <CardContent>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h2 className="text-lg font-semibold">Write your next letter</h2>
+              <p className="text-sm text-muted-foreground">
+                Start from a template or explore topics tailored to your scenario.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button asChild>
+                <Link href="/all-templates">Browse templates</Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link href="/resources/recommendation-letter-topics">
+                  Explore topics
+                </Link>
+              </Button>
+            </div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button asChild>
-              <Link href="/all-templates">Browse templates</Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/resources/recommendation-letter-topics">
-                Explore topics
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
+        </CardContent>
+      </Card>
     </div>
   );
 }

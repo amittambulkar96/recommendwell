@@ -1,6 +1,9 @@
 import { Metadata } from "next";
 import Link from "next/link";
 
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+
 export const metadata: Metadata = {
   title: "Terms of Service",
   description:
@@ -54,8 +57,9 @@ export const metadata: Metadata = {
 
 export default function TermsOfServicePage() {
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12 max-w-4xl mt-16">
-      <article className="prose prose-sm sm:prose-base lg:prose-lg mx-auto">
+    <div className="mx-auto w-full max-w-5xl px-6 pt-24 pb-16">
+      <Card className="border-border/70 bg-white/80">
+        <CardContent className="prose prose-sm sm:prose-base lg:prose-lg max-w-none">
         <header className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
             Terms of Service
@@ -313,7 +317,7 @@ export default function TermsOfServicePage() {
             If you have any questions about these Terms of Service, please
             contact us:
           </p>
-          <div className="bg-gray-50 p-4 sm:p-6 rounded-lg">
+          <div className="bg-muted/30 p-4 sm:p-6 rounded-2xl">
             <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
               <strong>Response Time:</strong> We typically respond to legal
               inquiries within 5 business days.
@@ -321,21 +325,19 @@ export default function TermsOfServicePage() {
           </div>
         </section>
 
-        <footer className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-gray-200">
+        <footer className="mt-8 sm:mt-12 pt-6 sm:pt-8 border-t border-border">
           <p className="text-sm text-gray-500 text-center">
             These Terms of Service are effective as of December 2025 and were
             last updated on December 2025.
           </p>
         </footer>
-      </article>
+        </CardContent>
+      </Card>
 
-      <div className="text-center mt-6 sm:mt-8">
-        <Link
-          href="/"
-          className="inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 bg-blue-600 text-white text-sm sm:text-base font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200"
-        >
-          ← Back to Homepage
-        </Link>
+      <div className="mt-6 sm:mt-8 flex justify-center">
+        <Button asChild variant="outline">
+          <Link href="/">Back to homepage</Link>
+        </Button>
       </div>
     </div>
   );

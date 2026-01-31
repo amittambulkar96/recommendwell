@@ -27,7 +27,7 @@ export default function ExampleCard({
   isPro,
 }: ExampleCardProps) {
   return (
-    <Card className="border-border/70 bg-white/80">
+    <Card className="h-full flex flex-col border-border/60 bg-white/80 transition-colors hover:border-border/90 hover:bg-muted/20">
       <CardHeader className="flex flex-row items-start justify-between gap-4">
         <div className="space-y-1">
           <CardTitle className="text-base leading-snug line-clamp-2">
@@ -48,7 +48,7 @@ export default function ExampleCard({
           </Badge>
         ))}
       </CardContent>
-      <CardFooter>
+      <CardFooter className="mt-auto">
         <Button asChild size="sm" variant="outline">
           <Link href={`/example/${slug}`}>Open example</Link>
         </Button>
