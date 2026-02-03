@@ -203,7 +203,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 {template.isPro && (
                                   <Badge
                                     variant="pro"
-                                    className="ml-auto"
+                                    className="ml-auto text-xs"
                                   >
                                     Pro
                                   </Badge>
@@ -276,7 +276,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 {example.isPro && (
                                   <Badge
                                     variant="pro"
-                                    className="ml-auto"
+                                    className="ml-auto text-xs"
                                   >
                                     Pro
                                   </Badge>
