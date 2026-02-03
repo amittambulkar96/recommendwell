@@ -202,8 +202,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 </span>
                                 {template.isPro && (
                                   <Badge
-                                    variant="secondary"
-                                    className="ml-auto px-1.5 py-0.3 text-[0.6rem]"
+                                    variant="pro"
+                                    className="ml-auto"
                                   >
                                     Pro
                                   </Badge>
@@ -275,8 +275,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                 </span>
                                 {example.isPro && (
                                   <Badge
-                                    variant="secondary"
-                                    className="ml-auto px-1.5 py-0.3 text-[0.6rem]"
+                                    variant="pro"
+                                    className="ml-auto"
                                   >
                                     Pro
                                   </Badge>
