@@ -52,12 +52,9 @@ export default async function UserUsageProgress() {
             </CardDescription>
           </div>
           <div className="text-left sm:text-right">
-            <div className="text-2xl md:text-3xl font-semibold tracking-tight">
+            <Badge variant="pro" className="text-sm">
               {isPro ? "Pro" : "Free"}
-            </div>
-            <div className="text-xs md:text-sm text-muted-foreground">
-              Lifetime
-            </div>
+            </Badge>
           </div>
         </div>
       </CardHeader>
