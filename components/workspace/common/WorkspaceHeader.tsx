@@ -27,7 +27,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { api } from "@/convex/_generated/api";
 import { authClient } from "@/lib/auth-client";
 import {
@@ -48,9 +48,16 @@ export default function WorkspaceHeader() {
   const result = useQuery(api.users.getUserProfile);
   const userProfile = result?.ok ? result.data : null;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { state, isMobile } = useSidebar();
+
+  const headerLeftOffset =
+    isMobile || state === "collapsed" ? "0px" : "var(--sidebar-width)";
 
   return (
-    <header className="sticky top-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b px-4 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+    <header
+      className="fixed top-0 right-0 z-50 flex h-16 shrink-0 items-center gap-2 border-b px-4 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 transition-[left] duration-200 ease-linear"
+      style={{ left: headerLeftOffset }}
+    >
       <SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="mr-2 h-4" />
       <Breadcrumb>

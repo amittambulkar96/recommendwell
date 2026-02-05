@@ -11,9 +11,9 @@ export default function WorkspaceLayout({
     <div className="h-screen w-full">
       <SidebarProvider>
         <AppSidebar />
-        <SidebarInset className="h-full">
+        <SidebarInset className="h-full min-h-0">
           <WorkspaceHeader />
-          <div className="flex-1 overflow-auto">{children}</div>
+          <div className="flex-1 min-h-0 overflow-auto pt-16">{children}</div>
         </SidebarInset>
       </SidebarProvider>
     </div>
